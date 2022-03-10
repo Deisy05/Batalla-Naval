@@ -17,10 +17,7 @@ import java.util.Objects;
 
 public class GUIGridBagLayout extends JFrame {
     private Header headerProject;
-    private JPanel panelIzquierdo;
-    private JPanel panelDerecho;
-    private JPanel tableroPosicion;
-    private JPanel tableroPrincipal;
+    private JPanel panelIzquierdo, panelDerecho, tableroPosicion, tableroPrincipal;
     private ModelClass modelClass;
     private Escucha escucha;
     private JButton horizontal, vertical, iniciar, territorioEnemigo;
@@ -82,7 +79,7 @@ public class GUIGridBagLayout extends JFrame {
 
         panelIzquierdo = new JPanel(new GridBagLayout());
         panelIzquierdo.setPreferredSize(new Dimension(480, 500));
-        panelIzquierdo.setBackground(Color.WHITE);
+        panelIzquierdo.setBackground(Color.pink);
         constrains.gridx = 0;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
@@ -103,7 +100,7 @@ public class GUIGridBagLayout extends JFrame {
 
         panelDerecho = new JPanel(new GridBagLayout());
         panelDerecho.setPreferredSize(new Dimension(360, 500));
-        panelDerecho.setBackground(Color.white);
+        panelDerecho.setBackground(Color.BLACK);
         constrains.gridx = 1;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
