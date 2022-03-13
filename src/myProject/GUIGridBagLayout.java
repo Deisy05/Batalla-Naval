@@ -305,7 +305,7 @@ public class GUIGridBagLayout extends JFrame {
                             for (int j = 0; j < 10; j++) {
                                 if (tableroPosicionU[i][j] == e.getSource()) {
                                     //once found, it is checked to see if it can be added to the underlying positions
-                                    if (modelClass.ubicarBarco(i, j, orientacion, tipoFlota)) {
+                                    if (modelClass.ubicarBarco(i, j, orientacion, tipoFlota,posicionFlota)) {
                                         pintarTableroPosicion(modelClass.getTableroPosUsuario());
                                         if (cantidadFlota[posicionFlota] == 0) {
                                             posicionFlota++;

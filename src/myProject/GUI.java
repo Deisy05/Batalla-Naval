@@ -16,19 +16,20 @@ import java.util.Objects;
  */
 
 public class GUI extends JFrame {
-    private static final String BIENVENIDA="¡BIENVENIDO/A A BATALLA NAVAL!\n Distribuye tu flota para iniciar partida";
-    private Header headerProject;
+
     private JPanel panelInicio, panelIzquierdo, panelDerecho, panelDerecho2, tableroPosicion, tableroPrincipal;
     private ModelClass modelClass;
     private Escucha escucha;
     private ImageIcon img;
-    private JLabel logo,labelAux;
-    private JButton horizontal, vertical, iniciar, instrucciones,
-    salir, territorioEnemigo, elegirPortaavion,elegirSubmarino,
-            elegirDestructor, elegirFragata;
-    private int interfaz, posicionFlota;
+    private JLabel logo,labelAux,labelInicioBatalla, labelCreaFlota, labelPortaavion, labelSubmarino,labelDestructor,
+            labelFragata,
+            labelAgua,labelTocado,labelHundido;
+    private JButton horizontal, vertical, iniciar, instrucciones, salir, ayuda, territorioEnemigo, elegirPortaavion,
+            elegirSubmarino,elegirDestructor, elegirFragata;
+    private  JButton []vehiculo;
+    private int interfaz, casillasFlota,vacio;
     private JButton[][] tableroPosicionU, tableroPosicionM;
-    private JTextArea cantidadFlotas, ayuda;
+    private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
     private String orientacion, tipoFlota;
@@ -41,9 +42,9 @@ public class GUI extends JFrame {
         interfaz = 0;
         tableroPosicionU = new JButton[10][10];
         tableroPosicionM = new JButton[10][10];
-        posicionFlota = 0;
+        casillasFlota = 0;
         nombreFlota = new String[]{"Portaaviones", "Submarinos", "Destructores", "Fragatas"};
-        //cantidadFlota = new int[]{1, 2, 3, 4};
+        cantidadFlota = new int[]{1, 1, 1, 1};
 
         this.setContentPane(new Canvas()); // to Paint the background image of the Frame
         initGUI();
@@ -63,11 +64,9 @@ public class GUI extends JFrame {
         //Set up JFrame Container's Layout
         this.getContentPane().setLayout(new GridBagLayout());
         constrains = new GridBagConstraints();
-
         modelClass = new ModelClass();
-
         escucha = new Escucha();
-
+        vacio=0;
 
         salir = new JButton();
         salir.addActionListener(escucha);
@@ -147,15 +146,30 @@ public class GUI extends JFrame {
 
     private void pintarEntrada(){
 
+        ayuda = new JButton();
+        ayuda.addActionListener(escucha);
+        ayuda.setPreferredSize(new Dimension(100, 80));
+        img = new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/help.png")));
+        ayuda.setIcon(new ImageIcon(img.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
+        ayuda.setBorderPainted(false);
+        ayuda.setFocusPainted(false);
+        ayuda.setContentAreaFilled(false);
+        constrains.gridx = 0;
+        constrains.gridy = 0;
+        constrains.gridwidth = 1;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.LINE_START;
+        this.add(ayuda, constrains);
+
         img= new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/creaFlota.png")));
         img= new ImageIcon(img.getImage().getScaledInstance(500,60,Image.SCALE_SMOOTH));
-        labelAux= new JLabel(img);
+        labelCreaFlota= new JLabel(img);
         constrains.gridx = 0;
         constrains.gridy = 0;
         constrains.gridwidth = 2;
         constrains.fill = GridBagConstraints.NONE;
-        constrains.anchor = GridBagConstraints.PAGE_END;
-        add(labelAux, constrains);
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(labelCreaFlota, constrains);
 
         panelIzquierdo = new JPanel(new GridBagLayout());
         panelIzquierdo.setPreferredSize(new Dimension(480, 500));
@@ -176,12 +190,12 @@ public class GUI extends JFrame {
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        panelIzquierdo.add(tableroPosicion, constrains);
+        //panelIzquierdo.add(tableroPosicion, constrains);
         pintarTableroPosicion();
 
         panelDerecho = new JPanel(new GridBagLayout());
         panelDerecho.setPreferredSize(new Dimension(480, 220));
-        //panelDerecho.setBackground(Color.gray);
+        //panelDerecho.setBackground(new Color(0,0,0,150));
         panelDerecho.setOpaque(false);
         constrains.gridx = 1;
         constrains.gridy = 1;
@@ -191,6 +205,8 @@ public class GUI extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         add(panelDerecho, constrains);
 
+        revalidate();
+        repaint();
         opcionesFlota();
 
     }
@@ -205,21 +221,22 @@ public class GUI extends JFrame {
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     tableroPosicionU[i][j] = new JButton();
-                    tableroPosicionU[i][j].setBackground(new Color(91, 164, 252));
+                    tableroPosicionU[i][j].setBackground(new Color(5, 182, 198));
                     tableroPosicionU[i][j].setPreferredSize(new Dimension(46, 46));
                     constrainsPosicion.gridx = i;
                     constrainsPosicion.gridy = j;
                     constrainsPosicion.gridwidth = 1;
                     constrainsPosicion.fill = GridBagConstraints.NONE;
                     constrainsPosicion.anchor = GridBagConstraints.CENTER;
-                    tableroPosicion.add(tableroPosicionU[i][j], constrainsPosicion);
+                    panelIzquierdo.add(tableroPosicionU[i][j], constrainsPosicion);
                 }
             }
+
         }
     }
 
     /**
-     * Este método agrega los componentes necesarios para elegir la flota
+     * Este método agrega los componentes necesarios para crear la flota
      */
     private void opcionesFlota(){
 
@@ -238,15 +255,15 @@ public class GUI extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         panelDerecho.add(elegirFragata, constrains);
 
-        labelAux= new JLabel("Fragata");
-        labelAux.setFont(new Font(Font.SERIF,Font.BOLD,15));
-        labelAux.setForeground(Color.WHITE);
+        labelFragata= new JLabel("Fragata");
+        labelFragata.setFont(new Font(Font.SERIF,Font.BOLD,15));
+        labelFragata.setForeground(Color.WHITE);
         constrains.gridx = 0;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        panelDerecho.add(labelAux, constrains);
+        panelDerecho.add(labelFragata, constrains);
 
         elegirDestructor= new JButton();
         elegirDestructor.addActionListener(escucha);
@@ -265,15 +282,15 @@ public class GUI extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         panelDerecho.add(elegirDestructor, constrains);
 
-        labelAux= new JLabel("Destructor");
-        labelAux.setFont(new Font(Font.SERIF,Font.BOLD,15));
-        labelAux.setForeground(Color.WHITE);
+        labelDestructor= new JLabel("Destructor");
+        labelDestructor.setFont(new Font(Font.SERIF,Font.BOLD,15));
+        labelDestructor.setForeground(Color.WHITE);
         constrains.gridx = 1;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        panelDerecho.add(labelAux, constrains);
+        panelDerecho.add(labelDestructor, constrains);
 
         elegirPortaavion= new JButton();
         elegirPortaavion.addActionListener(escucha);
@@ -292,22 +309,22 @@ public class GUI extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         panelDerecho.add(elegirPortaavion, constrains);
 
-        labelAux= new JLabel("Portaaviones");
-        labelAux.setFont(new Font(Font.SERIF,Font.BOLD,15));
-        labelAux.setForeground(Color.WHITE);
+        labelPortaavion= new JLabel("Portaavion");
+        labelPortaavion.setFont(new Font(Font.SERIF,Font.BOLD,15));
+        labelPortaavion.setForeground(Color.WHITE);
         constrains.gridx = 2;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        panelDerecho.add(labelAux, constrains);
+        panelDerecho.add(labelPortaavion, constrains);
 
         elegirSubmarino= new JButton();
         elegirSubmarino.addActionListener(escucha);
         elegirSubmarino.setPreferredSize(new Dimension(110, 80));
         img =
-                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/submarino/submarino" +
-                        ".png")));
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/submarino" +
+                        "/submarino.png")));
         elegirSubmarino.setIcon(new ImageIcon(img.getImage().getScaledInstance(110, 80, Image.SCALE_SMOOTH)));
         elegirSubmarino.setBorderPainted(false);
         elegirSubmarino.setFocusPainted(false);
@@ -319,15 +336,20 @@ public class GUI extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         panelDerecho.add(elegirSubmarino, constrains);
 
-        labelAux= new JLabel("Submarino");
-        labelAux.setFont(new Font(Font.SERIF,Font.BOLD,15));
-        labelAux.setForeground(Color.WHITE);
+        labelSubmarino= new JLabel("Submarino");
+        labelSubmarino.setFont(new Font(Font.SERIF,Font.BOLD,15));
+        labelSubmarino.setForeground(Color.WHITE);
         constrains.gridx = 3;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        panelDerecho.add(labelAux, constrains);
+        panelDerecho.add(labelSubmarino, constrains);
+
+        vehiculo= new JButton[]{elegirPortaavion,elegirSubmarino,elegirDestructor,elegirFragata};
+
+        revalidate();
+        repaint();
 
     }
 
@@ -336,8 +358,13 @@ public class GUI extends JFrame {
      */
     private void alineacionFlota(){
 
+        elegirFragata.removeActionListener(escucha);
+        elegirPortaavion.removeActionListener(escucha);
+        elegirDestructor.removeActionListener(escucha);
+        elegirSubmarino.removeActionListener(escucha);
+
         panelDerecho2 = new JPanel(new GridBagLayout());
-        panelDerecho2.setPreferredSize(new Dimension(470, 120));
+        panelDerecho2.setPreferredSize(new Dimension(470, 150));
         panelDerecho2.setOpaque(true);
         panelDerecho2.setBackground(new Color(0,0,0, 150));
         constrains.gridx = 1;
@@ -359,78 +386,222 @@ public class GUI extends JFrame {
 
         horizontal = new JButton();
         horizontal.addActionListener(escucha);
-        horizontal.setPreferredSize(new Dimension(200, 30));
+        horizontal.setPreferredSize(new Dimension(150, 30));
         img =
                 new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/horizontal" +
                         ".png")));
-        horizontal.setIcon(new ImageIcon(img.getImage().getScaledInstance(200, 30, Image.SCALE_SMOOTH)));
+        horizontal.setIcon(new ImageIcon(img.getImage().getScaledInstance(150, 30, Image.SCALE_SMOOTH)));
         horizontal.setBorderPainted(false);
         horizontal.setContentAreaFilled(false);
-
+        constrains.weightx= 1;
         constrains.gridx = 0;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
-        constrains.anchor = GridBagConstraints.LINE_START;
+        constrains.anchor = GridBagConstraints.PAGE_START;
         panelDerecho2.add(horizontal, constrains);
 
         vertical = new JButton();
         vertical.addActionListener(escucha);
-        vertical.setPreferredSize(new Dimension(200, 30));
+        vertical.setPreferredSize(new Dimension(150, 30));
         img =
                 new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/vertical" +
                         ".png")));
-        vertical.setIcon(new ImageIcon(img.getImage().getScaledInstance(200, 30, Image.SCALE_SMOOTH)));
+        vertical.setIcon(new ImageIcon(img.getImage().getScaledInstance(150, 30, Image.SCALE_SMOOTH)));
         vertical.setBorderPainted(false);
         vertical.setFocusPainted(false);
         vertical.setContentAreaFilled(false);
+        constrains.weightx= 1;
         constrains.gridx = 1;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
-        constrains.anchor = GridBagConstraints.LINE_END;
+        constrains.anchor = GridBagConstraints.PAGE_START;
         panelDerecho2.add(vertical, constrains);
+        revalidate();
+        repaint();
     }
 
     /**
-     * Este método crea la flota de acuerdo a la selección del usuario
+     * Este método crea el componente para dar una instruccion al usuario
      */
-    private void crearFlota(){
+    private void textoSeleccionarCasilla(){
+
+        img= new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/seleccionarCasilla" +
+                ".png")));
+        img= new ImageIcon(img.getImage().getScaledInstance(400, 100, Image.SCALE_SMOOTH));
+        labelAux=new JLabel(img);
+        panelDerecho2.add(labelAux);
+        addEscucha(tableroPosicionU);
+        interfaz= 1;
+        revalidate();
+        repaint();
 
     }
 
     /**
      * This method has the purpose of modifying the images displayed by the buttons
-     * with respect to what is in the array parameter
-     *
-     * @param matrix with the changes to be made
+     * @param posicionEnY es la posicion inicial Y en la matriz
+     * @param posicionEnX es la posicion inicial X en la matriz
      */
-    private void pintarTableroPosicion(String[][] matrix) {
+    private void pintarFlotaTableroPosicion(int posicionEnX, int posicionEnY) {
+
+        String direccion = "";
+
+        for(int p = 1; p <= casillasFlota;  p++){
+            switch (tipoFlota) {
+                case "Portaaviones" -> direccion = "/myProject/resources/portaaviones/portaaviones";
+                case "Submarinos" -> direccion = "/myProject/resources/submarino/submarino";
+                case "Destructores" -> direccion = "/myProject/resources/destructor/destructor";
+                case "Fragatas" -> direccion = "/myProject/resources/fragata/fragata";
+            }
+            switch (orientacion){
+                case "horizontal" -> {
+                    direccion+= "H "+p+".png";
+                    img = new ImageIcon(getClass().getResource(direccion));
+                    tableroPosicionU[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                            46,
+                            Image.SCALE_SMOOTH)));
+
+                    posicionEnX++;
+                }
+                case "vertical" -> {
+                    direccion += "V " + p + ".png";
+                    img = new ImageIcon(getClass().getResource(direccion));
+                    tableroPosicionU[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                            46,
+                            Image.SCALE_SMOOTH)));
+                    posicionEnY++;
+                }
+            }
+            revalidate();
+            repaint();
+        }
 
     }
 
+    /**
+     * Este método confirma si aun está disponible determinado tipo de vehiculo
+     * Cuando no queden vehiculos por ubicar, crea la opcion de iniciar partida
+     */
+    private void eliminarOpcionFlota(){
+
+        switch (tipoFlota){
+            case "Portaaviones" -> {panelDerecho.remove(elegirPortaavion);
+                                    panelDerecho.remove(labelPortaavion);
+                                    vacio++;
+            }
+            case "Submarinos" -> {cantidadFlota[1]--;
+                if(cantidadFlota[1]==0){
+                    panelDerecho.remove(elegirSubmarino);
+                    panelDerecho.remove(labelSubmarino);
+                    vacio++;}
+            }
+            case "Destructores" -> {cantidadFlota[2]--;
+                if(cantidadFlota[2]==0){
+                    panelDerecho.remove(elegirDestructor);
+                    panelDerecho.remove(labelDestructor);
+                    vacio++;}
+            }
+            case "Fragatas" -> {cantidadFlota[3]--;
+                if(cantidadFlota[3]==0){
+                    panelDerecho.remove(elegirFragata);
+                    panelDerecho.remove(labelFragata);
+                    vacio++;}
+            }
+        }
+
+        if(vacio==4){
+            this.remove(labelCreaFlota);
+            img=
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/iniciaBatalla.png")));
+            img= new ImageIcon(img.getImage().getScaledInstance(600,70,Image.SCALE_SMOOTH));
+            labelInicioBatalla= new JLabel(img);
+            constrains.gridx = 0;
+            constrains.gridy = 0;
+            constrains.gridwidth = 2;
+            constrains.fill = GridBagConstraints.NONE;
+            constrains.anchor = GridBagConstraints.CENTER;
+            add(labelInicioBatalla, constrains);
+
+            iniciar= new JButton();
+            iniciar.addActionListener(escucha);
+            iniciar.setPreferredSize(new Dimension(300, 80));
+            img = new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/botonIniciar" +
+                    ".png")));
+            iniciar.setIcon(new ImageIcon(img.getImage().getScaledInstance(300, 60, Image.SCALE_SMOOTH)));
+            iniciar.setBorderPainted(false);
+            iniciar.setContentAreaFilled(false);
+            constrains.gridx = 0;
+            constrains.gridy = 0;
+            constrains.gridwidth = 1;
+            constrains.fill = GridBagConstraints.NONE;
+            constrains.anchor = GridBagConstraints.CENTER;
+            panelDerecho.add(iniciar, constrains);
+
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * This method adds 100 buttons to tableroPrincipal for the first time, when the tableroPosicion is created
+     *
+     */
+
     private void pintarTableroPrincipal() {
-        if (interfaz == 2) {
+        panelDerecho.setPreferredSize(new Dimension(480,500));
+        constrains.gridx = 1;
+        constrains.gridy = 1;
+        constrains.gridwidth = 1;
+        constrains.gridheight= 2;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.CENTER;
+        this.add(panelDerecho,constrains);
+
             GridBagConstraints constrainsPosicionDerecha = new GridBagConstraints();
-            //constrainsPosicionDerecha.weightx = 40;
-            //constrainsPosicionDerecha.weighty = 40;
+
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
                     tableroPosicionM[i][j] = new JButton();
-                    tableroPosicionM[i][j].setBackground(new Color(30, 124, 236));
-                    tableroPosicionM[i][j].setPreferredSize(new Dimension(40, 40));
+                    tableroPosicionM[i][j].setBackground(new Color(83, 191, 227));
+                    tableroPosicionM[i][j].setPreferredSize(new Dimension(46, 46));
                     constrainsPosicionDerecha.gridx = i;
                     constrainsPosicionDerecha.gridy = j;
                     constrainsPosicionDerecha.gridwidth = 1;
                     constrainsPosicionDerecha.fill = GridBagConstraints.NONE;
                     constrainsPosicionDerecha.anchor = GridBagConstraints.CENTER;
-                    tableroPrincipal.add(tableroPosicionM[i][j], constrainsPosicionDerecha);
+                    panelDerecho.add(tableroPosicionM[i][j], constrainsPosicionDerecha);
                 }
             }
-        }
+        revalidate();
+        repaint();
     }
 
-    private void pintarTableroPrincipal(String[][] matrixTabPrincipal) {
+    /**
+     * Este método crea el componente JButton para acceder a la vista del territorio enemigo
+     */
+
+    private void opcionTerritorioEnemigo(){
+        remove(labelInicioBatalla);
+        revalidate();
+        repaint();
+
+        territorioEnemigo = new JButton();
+        territorioEnemigo.addActionListener(escucha);
+        territorioEnemigo.setPreferredSize(new Dimension(100, 80));
+        img = new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/enemy1.png")));
+        territorioEnemigo.setIcon(new ImageIcon(img.getImage().getScaledInstance(60, 70, Image.SCALE_SMOOTH)));
+        territorioEnemigo.setBorderPainted(false);
+        territorioEnemigo.setFocusPainted(false);
+        territorioEnemigo.setContentAreaFilled(false);
+        constrains.gridx = 1;
+        constrains.gridy = 0;
+        constrains.gridwidth = 1;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(territorioEnemigo, constrains);
 
     }
 
@@ -445,16 +616,7 @@ public class GUI extends JFrame {
      * Shows the images of the ships that will be located at the beginning
      */
     private void pintarOpcionAlineacion() {
-        String direccion = "";
-        switch (nombreFlota[posicionFlota]) {
-            case "Portaaviones" -> direccion = "/resources/portaaviones.";
-            case "Submarinos" -> direccion = "/resources/submarino.";
-            case "Destructores" -> direccion = "/resources/destructor.";
-            case "Fragatas" -> direccion = "/resources/fragata.";
-        }
-        if (interfaz == 0) {
-            interfaz = 1;
-        }
+
 
     }
 
@@ -466,7 +628,7 @@ public class GUI extends JFrame {
     private void addEscucha(JButton[][] matrix) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                matrix[i][j].setBackground(new Color(16, 92, 234));
+                matrix[i][j].setBackground(new Color(30, 124, 120));
                 matrix[i][j].addActionListener(escucha);
             }
         }
@@ -480,11 +642,13 @@ public class GUI extends JFrame {
     private void removeEscucha(JButton[][] matrix) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                matrix[i][j].setBackground(new Color(30, 124, 236));
+                matrix[i][j].setBackground(new Color(5, 182, 198));
                 matrix[i][j].removeActionListener(escucha);
             }
         }
     }
+
+
 
     /**
      * Main process of the Java program
@@ -503,49 +667,89 @@ public class GUI extends JFrame {
      */
 
     private class Escucha implements ActionListener {
+        int opcionIniciar=0;
+
         @Override
         public void actionPerformed(ActionEvent e) {
+
             if (e.getSource()==salir){
                 System.exit(0);
             }
-
-            if(e.getSource()==iniciar){
-                System.out.println("funciona el boton");
+            if(e.getSource()==iniciar&& opcionIniciar==0){
                 remove(panelInicio);
                 pintarEntrada();
+                opcionIniciar=1;
+                revalidate();
+                repaint();
+            }else if(e.getSource()==iniciar){
+                panelDerecho.remove(iniciar);
+                pintarTableroPrincipal();
+                opcionTerritorioEnemigo();
                 revalidate();
                 repaint();
             }
-            if(e.getSource()==elegirFragata||e.getSource()==elegirDestructor||e.getSource()==elegirPortaavion||e.getSource()==elegirSubmarino){
-                alineacionFlota();
-                revalidate();
-                repaint();
-            }
-            if(e.getSource()==horizontal){
-                orientacion="horizontal";
-            }
-            if(e.getSource()==vertical){
-                orientacion="vertical";
-            }
-
-            if (interfaz == 1) {
-                if (posicionFlota < 4) {
-
+            switch (interfaz){
+                case 0 ->{
+                    //revisar cuál de los vehiculos fue seleccionado
+                    for (int m = 0; m < 4; m++) {
+                        if (vehiculo[m] == e.getSource()) {
+                            alineacionFlota();
+                            tipoFlota = nombreFlota[m];
+                            casillasFlota = 5 - (m + 1);
+                            break;
+                        }
+                    }
                     if (e.getSource() == horizontal) {
                         orientacion = "horizontal";
-                        addEscucha(tableroPosicionU);
-                        horizontal.removeActionListener(escucha);
-                        vertical.removeActionListener(escucha);
-
-                    } else if (e.getSource() == vertical) {
+                        panelDerecho2.removeAll();
+                        revalidate();
+                        repaint();
+                        textoSeleccionarCasilla();
+                    }
+                    if (e.getSource() == vertical) {
                         orientacion = "vertical";
-                        addEscucha(tableroPosicionU);
-                        horizontal.removeActionListener(escucha);
-                        vertical.removeActionListener(escucha);
+                        panelDerecho2.removeAll();
+                        textoSeleccionarCasilla();
+                        revalidate();
+                        repaint();
 
                     }
                 }
+                case 1 ->{
+                    //check which of the 100 buttons was clicked
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if (tableroPosicionU[i][j] == e.getSource()) {
+                                //once found, it is checked to see if it can be added to the underlying positions
+                                if (modelClass.ubicarBarco(i, j, orientacion, tipoFlota, casillasFlota)) {
+                                    pintarFlotaTableroPosicion(i, j);
+                                    panelDerecho2.removeAll();
+                                    removeEscucha(tableroPosicionU);
+                                    remove(panelDerecho2);
+                                    eliminarOpcionFlota();
+                                    interfaz=0;
+
+                                    elegirPortaavion.addActionListener(escucha);
+                                    elegirSubmarino.addActionListener(escucha);
+                                    elegirDestructor.addActionListener(escucha);
+                                    elegirFragata.addActionListener(escucha);
+
+                                    revalidate();
+                                    repaint();
+
+                                } else{
+                                    JOptionPane.showMessageDialog(panelIzquierdo,
+                                            "No se pudo posicionar la flota porque " + modelClass.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
             }
+
         }
     }
 }

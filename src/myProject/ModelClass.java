@@ -30,21 +30,15 @@ public class ModelClass {
      * @param barco vessel name to add
      * @return whether it is possible or not
      */
-    public boolean ubicarBarco(int posicionHorizontal, int posicionVertical, String alineacion, String barco){
+    public boolean ubicarBarco(int posicionHorizontal, int posicionVertical, String alineacion, String barco,
+                               int espacio){
         boolean answer=false;
-        int espacio=0;
-        switch (barco){
-            case "portaaviones"-> espacio=4;
-            case "submarino"-> espacio=3;
-            case "destructor"-> espacio=2;
-            case "fragata"-> espacio=1;
-        }
+
         //checks if the initial position (marked by the user) is empty
         if (!tableroPosUsuario[posicionHorizontal][posicionVertical].equals("")){
             answer =false;
             error="esta posicion ya esta en uso";
         }
-
         else if(alineacion.equals("horizontal")){
             //check that the initial position marked by the user part of the fleet is not left out.
             if(posicionHorizontal+espacio>10){
@@ -60,12 +54,10 @@ public class ModelClass {
                     //after having carried out all the revisions, it is verified that the boat can be added.
                     else if(i== posicionHorizontal + espacio-1){
                         answer=true;
-                        setTableroPosUsuario(posicionHorizontal, posicionVertical, alineacion, barco, espacio);
                     }
                 }
             }
         }
-        //check that the initial position marked by the user part of the fleet is not left out.
         else if(alineacion.equals("vertical")){
             //check that the initial position marked by the user part of the fleet is not left out.
             if(posicionVertical+espacio>10){
@@ -81,10 +73,11 @@ public class ModelClass {
                     //after having carried out all the revisions, it is verified that the boat can be added.
                     else if(i== posicionVertical + espacio-1){
                         answer=true;
-                        setTableroPosUsuario(posicionHorizontal, posicionVertical, alineacion, barco, espacio);
                     }
                 }
             }
+        }
+        if(answer){setTableroPosUsuario(posicionHorizontal, posicionVertical, alineacion, barco, espacio);
         }
         return answer;
     }
