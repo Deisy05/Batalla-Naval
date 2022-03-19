@@ -17,18 +17,20 @@ import java.util.Objects;
 
 public class GUI extends JFrame {
 
-    private JPanel panelInicio, panelIzquierdo, panelDerecho, panelDerecho2, tableroPosicion, tableroPrincipal;
+    private JPanel panelInicio, panelIzquierdo, panelDerecho, panelDerecho2,
+            tableroEnemigo;
     private ModelClass modelClass;
     private Escucha escucha;
     private ImageIcon img;
     private JLabel logo,labelAux,labelInicioBatalla, labelCreaFlota, labelPortaavion, labelSubmarino,labelDestructor,
             labelFragata,
             labelAgua,labelTocado,labelHundido;
-    private JButton horizontal, vertical, iniciar, instrucciones, salir, ayuda, territorioEnemigo, elegirPortaavion,
+    private JButton horizontal, vertical, iniciar, instrucciones, salir, ayuda, verTerritorioEnemigo, elegirPortaavion,
             elegirSubmarino,elegirDestructor, elegirFragata;
     private  JButton []vehiculo;
     private int interfaz, casillasFlota,vacio;
-    private JButton[][] tableroPosicionU, tableroPosicionM, tableroPrincipalU;
+    private JButton[][] tableroPosicionU, tableroPrincipalU, tableroPosicionEnemigo;
+
     private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
@@ -41,10 +43,11 @@ public class GUI extends JFrame {
     public GUI() {
         interfaz = 0;
         tableroPosicionU = new JButton[10][10];
-        tableroPosicionM = new JButton[10][10];
+        tableroPrincipalU = new JButton[10][10];
+        tableroPosicionEnemigo = new JButton[10][10];
         casillasFlota = 0;
-        nombreFlota = new String[]{"Portaaviones", "Submarinos", "Destructores", "Fragatas"};
-        cantidadFlota = new int[]{4, 3, 2, 1};
+        nombreFlota = new String[]{"Portaaviones", "Submarino", "Destructor", "Fragata"};
+        cantidadFlota = new int[]{1, 1, 1, 1};
 
         this.setContentPane(new Canvas()); // to Paint the background image of the Frame
         initGUI();
@@ -180,16 +183,8 @@ public class GUI extends JFrame {
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
         add(panelIzquierdo, constrains);
-
-        tableroPosicion = new JPanel(new GridBagLayout());
-        tableroPosicion.setPreferredSize(new Dimension(460, 460));
-        tableroPosicion.setBackground(Color.GREEN);
-        constrains.gridx = 0;
-        constrains.gridy = 0;
-        constrains.gridwidth = 1;
-        constrains.fill = GridBagConstraints.NONE;
-        constrains.anchor = GridBagConstraints.CENTER;
         pintarTableroPosicion();
+        pintarTableroEnemigo();
 
         panelDerecho = new JPanel(new GridBagLayout());
         panelDerecho.setPreferredSize(new Dimension(480, 220));
@@ -228,6 +223,31 @@ public class GUI extends JFrame {
                     constrainsPosicion.fill = GridBagConstraints.NONE;
                     constrainsPosicion.anchor = GridBagConstraints.CENTER;
                     panelIzquierdo.add(tableroPosicionU[i][j], constrainsPosicion);
+                }
+            }
+
+        }
+    }
+
+    private void pintarTableroEnemigo(){
+        tableroEnemigo= new JPanel(new GridBagLayout());
+        tableroEnemigo.setPreferredSize(new Dimension(480, 500));
+        tableroEnemigo.setOpaque(false);
+
+        if (interfaz == 0) {
+            GridBagConstraints constrainsPosicion = new GridBagConstraints();
+
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    tableroPosicionEnemigo[i][j] = new JButton();
+                    tableroPosicionEnemigo[i][j].setBackground(new Color(5, 182, 198));
+                    tableroPosicionEnemigo[i][j].setPreferredSize(new Dimension(46, 46));
+                    constrainsPosicion.gridx = i;
+                    constrainsPosicion.gridy = j;
+                    constrainsPosicion.gridwidth = 1;
+                    constrainsPosicion.fill = GridBagConstraints.NONE;
+                    constrainsPosicion.anchor = GridBagConstraints.CENTER;
+                    tableroEnemigo.add(tableroPosicionEnemigo[i][j], constrainsPosicion);
                 }
             }
 
@@ -441,26 +461,26 @@ public class GUI extends JFrame {
 
     /**
      * This method has the purpose of modifying the images displayed by the buttons
-     * @param _tableroPosicionPlayer matrix of player
+     * @param posicionPlayer matrix of player
      * @param posicionEnX es la posicion inicial X en la matriz
      * @param posicionEnY es la posicion inicial Y en la matriz
      */
-    private void pintarFlotaTableroPosicion(String[][] _tableroPosicionPlayer, int posicionEnX, int posicionEnY) {
+    private void pintarFlotaTableroPosicion(JButton[][] posicionPlayer,int posicionEnX, int posicionEnY) {
 
         String direccion = "";
 
         for(int p = 1; p <= casillasFlota;  p++){
             switch (tipoFlota) {
                 case "Portaaviones" -> direccion = "/myProject/resources/portaaviones/portaaviones";
-                case "Submarinos" -> direccion = "/myProject/resources/submarino/submarino";
-                case "Destructores" -> direccion = "/myProject/resources/destructor/destructor";
-                case "Fragatas" -> direccion = "/myProject/resources/fragata/fragata";
+                case "Submarino" -> direccion = "/myProject/resources/submarino/submarino";
+                case "Destructor" -> direccion = "/myProject/resources/destructor/destructor";
+                case "Fragata" -> direccion = "/myProject/resources/fragata/fragata";
             }
             switch (orientacion){
                 case "horizontal" -> {
                     direccion+= "H "+p+".png";
                     img = new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion)));
-                    tableroPosicionU[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
                             46,
                             Image.SCALE_SMOOTH)));
 
@@ -469,7 +489,7 @@ public class GUI extends JFrame {
                 case "vertical" -> {
                     direccion += "V " + p + ".png";
                     img = new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion)));
-                    tableroPosicionU[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
                             46,
                             Image.SCALE_SMOOTH)));
                     posicionEnY++;
@@ -492,19 +512,19 @@ public class GUI extends JFrame {
                 panelDerecho.remove(labelPortaavion);
                 vacio++;
             }
-            case "Submarinos" -> {cantidadFlota[1]--;
+            case "Submarino" -> {cantidadFlota[1]--;
                 if(cantidadFlota[1]==0){
                     panelDerecho.remove(elegirSubmarino);
                     panelDerecho.remove(labelSubmarino);
                     vacio++;}
             }
-            case "Destructores" -> {cantidadFlota[2]--;
+            case "Destructor" -> {cantidadFlota[2]--;
                 if(cantidadFlota[2]==0){
                     panelDerecho.remove(elegirDestructor);
                     panelDerecho.remove(labelDestructor);
                     vacio++;}
             }
-            case "Fragatas" -> {cantidadFlota[3]--;
+            case "Fragata" -> {cantidadFlota[3]--;
                 if(cantidadFlota[3]==0){
                     panelDerecho.remove(elegirFragata);
                     panelDerecho.remove(labelFragata);
@@ -564,15 +584,15 @@ public class GUI extends JFrame {
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                tableroPosicionM[i][j] = new JButton();
-                tableroPosicionM[i][j].setBackground(new Color(83, 191, 227));
-                tableroPosicionM[i][j].setPreferredSize(new Dimension(46, 46));
+                tableroPrincipalU[i][j] = new JButton();
+                tableroPrincipalU[i][j].setBackground(new Color(83, 191, 227));
+                tableroPrincipalU[i][j].setPreferredSize(new Dimension(46, 46));
                 constrainsPosicionDerecha.gridx = i;
                 constrainsPosicionDerecha.gridy = j;
                 constrainsPosicionDerecha.gridwidth = 1;
                 constrainsPosicionDerecha.fill = GridBagConstraints.NONE;
                 constrainsPosicionDerecha.anchor = GridBagConstraints.CENTER;
-                panelDerecho.add(tableroPosicionM[i][j], constrainsPosicionDerecha);
+                panelDerecho.add(tableroPrincipalU[i][j], constrainsPosicionDerecha);
             }
         }
         revalidate();
@@ -588,37 +608,59 @@ public class GUI extends JFrame {
         revalidate();
         repaint();
 
-        territorioEnemigo = new JButton();
-        territorioEnemigo.addActionListener(escucha);
-        territorioEnemigo.setPreferredSize(new Dimension(100, 80));
+        verTerritorioEnemigo = new JButton();
+        verTerritorioEnemigo.addActionListener(escucha);
+        verTerritorioEnemigo.setPreferredSize(new Dimension(100, 80));
         img = new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/botones/enemy1.png")));
-        territorioEnemigo.setIcon(new ImageIcon(img.getImage().getScaledInstance(60, 70, Image.SCALE_SMOOTH)));
-        territorioEnemigo.setBorderPainted(false);
-        territorioEnemigo.setFocusPainted(false);
-        territorioEnemigo.setContentAreaFilled(false);
+        verTerritorioEnemigo.setIcon(new ImageIcon(img.getImage().getScaledInstance(60, 70, Image.SCALE_SMOOTH)));
+        verTerritorioEnemigo.setBorderPainted(false);
+        verTerritorioEnemigo.setFocusPainted(false);
+        verTerritorioEnemigo.setContentAreaFilled(false);
         constrains.gridx = 1;
         constrains.gridy = 0;
         constrains.gridwidth = 1;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
-        add(territorioEnemigo, constrains);
+        add(verTerritorioEnemigo, constrains);
 
     }
 
     /**
-     * Method in order to load the information that displays in panelChoice
+     *
      */
-    private void pintarPanelEleccion() {
+    private void pintarDisparo(int posicionX, int posicionY) {
+        switch (modelClass.getIndicador()){
+            case "agua" -> {
+                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/agua.png"));
+                tableroPrincipalU[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                        46,
+                        Image.SCALE_SMOOTH)));
+            }
+            case "tocado"->{
+                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/bomb.png"));
+                tableroPrincipalU[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                        46,
+                        Image.SCALE_SMOOTH)));
+            }
+            case "hundido"->{
+                String [][] matrixDisparos= modelClass.getTableroPosMaquina();
+                for (int i = 0; i < 10 ; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if(matrixDisparos[i][j]== "hundido"){
+                            img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores" +
+                                    "/fire2.png"));
+                            tableroPrincipalU[i][j].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                                    46,
+                                    Image.SCALE_SMOOTH)));
+                        }
 
+                    }
+                }
+            }
+        }
     }
 
-    /**
-     * Shows the images of the ships that will be located at the beginning
-     */
-    private void pintarOpcionAlineacion() {
 
-
-    }
 
     /**
      * adds the listener to the 100 buttons
@@ -686,6 +728,8 @@ public class GUI extends JFrame {
                 panelDerecho.remove(iniciar);
                 pintarTableroPrincipal();
                 opcionTerritorioEnemigo(); //sale después de ordenar la flota
+                addEscucha(tableroPrincipalU);
+                interfaz=2;
                 revalidate();
                 repaint();
             }
@@ -725,11 +769,19 @@ public class GUI extends JFrame {
                             if (tableroPosicionU[i][j] == e.getSource()) {
                                 //once found, it is checked to see if it can be added to the underlying positions
                                 if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota, casillasFlota)) {
-                                    pintarFlotaTableroPosicion(modelClass.getTableroPosUsuario(),i, j);
+                                    pintarFlotaTableroPosicion(tableroPosicionU,i, j);
+                                    eliminarOpcionFlota();
+                                    modelClass.ingresarBarcosMaquina();
+                                    tipoFlota= modelClass.getBarcoMaquina();
+                                    orientacion= modelClass.getOrientacionMaquina();
+                                    casillasFlota= modelClass.getEspaciosQueOcupaMaquina();
+
+                                    pintarFlotaTableroPosicion(tableroPosicionEnemigo,
+                                            modelClass.getCoordenadaXMaquina(),modelClass.getCoordenadaYMaquina());
                                     panelDerecho2.removeAll();
                                     removeEscucha(tableroPosicionU);
                                     remove(panelDerecho2);
-                                    eliminarOpcionFlota();
+
                                     interfaz=0;
 
                                     elegirPortaavion.addActionListener(escucha);
@@ -739,7 +791,7 @@ public class GUI extends JFrame {
 
                                     revalidate();
                                     repaint();
-                                    modelClass.ingresarBarcosMaquina();
+
                                 } else{
                                     JOptionPane.showMessageDialog(panelIzquierdo,
                                             "No se pudo posicionar la flota porque " + modelClass.getError(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -749,22 +801,27 @@ public class GUI extends JFrame {
                         }
                     }
                 }
+                case 2->{
+                    for (int i = 0; i < 10 ; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if(e.getSource() == tableroPrincipalU[i][j]){
+                                modelClass.setTableroInfPrincipalU(i,j);
+                                pintarDisparo(i,j);
+                                // pintarTableroPrincipal(modelClass.getTableroInfPrincipalU());
+                            }
 
-
-            }
-
-        }
-
-        private void setDisparo(ActionEvent disparo){
-            for (int i = 0; i < 10 ; i++) {
-                for (int j = 0; j < 10; j++) {
-                    if(disparo.getSource() == tableroPrincipalU[i][j]){
-                        modelClass.setTableroInfPrincipalU(i,j);
-                       // pintarTableroPrincipal(modelClass.getTableroInfPrincipalU());
+                        }
                     }
 
                 }
+
+            }
+
+            if(e.getSource()== verTerritorioEnemigo){
+                JOptionPane.showMessageDialog(null, tableroEnemigo, "TABLERO DE POSICIÓN DEL ENEMIGO",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
+
     }
 }
