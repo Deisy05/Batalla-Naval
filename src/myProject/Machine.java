@@ -2,16 +2,32 @@ package myProject;
 
 import java.util.Random;
 
-public class Machine {
+/**
+ * This class is designed in order to apply the random game rules of machine player
+ * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
+ *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
+ * @version v.1.0.2 date: 16/03/2022
+ */
+public class Machine
+{
     private String[] flota;
     private int estaFlota, espaciosMachine;
 
-    public Machine() {
-        flota = new String[]{"portaaviones","submarino","submarino","destructor","destructor","destructor","fragata","fragata","fragata","fragata"};
+    public Machine()
+    {
+
+        //We declare the fleet of the machine
+        flota = new String[]
+                {"Portaaviones","Submarino","Submarino","Destructor","Destructor","Destructor","Fragata","Fragata","Fragata","Fragata"};
         estaFlota = 0;
     }
-    // toma aleatoria de barcos
-    public String getBarco(){
+
+    /**
+     * Method that chooses a ship randomly from the fleet "flota"
+     * @return barco the name of the fleet
+     */
+    public String getBarco()
+    {
         String barco="";
         if(estaFlota < 10) {
             barco = flota[estaFlota];
@@ -20,28 +36,47 @@ public class Machine {
         return barco;
     }
 
-    public String getOrientacion(){
+    /**
+     * Method that randomizes the location of a ship
+     * @return horizontal or vertical String
+     */
+    public String getOrientacion()
+    {
         Random random = new Random();
         String[] orientacionMaquina = {"horizontal","vertical"};
         return (orientacionMaquina[random.nextInt(0,2)]);
     }
 
+    /**
+     * Method that randomly determines the location of the ship at the X coordinate
+     * between 0 - 9
+     * @return X coordinate
+     */
     public int getCoordenadaX(){
         Random random = new Random();
         return random.nextInt(0,10);
     }
 
+    /**
+     * Method that randomly determines the location of the ship at the Y coordinate
+     * between 0 - 9
+     * @return Y coordinate
+     */
     public int getCoordenadaY(){
         Random random = new Random();
         return random.nextInt(0,10);
     }
 
-    public int getEspacioQueOcupa() {
-        switch (getBarco()) {
-            case "portaaviones" -> espaciosMachine = 4;
-            case "submarino" -> espaciosMachine = 3;
-            case "destructor" -> espaciosMachine = 2;
-            case "fragata" -> espaciosMachine = 1;
+    /**
+     * Method that determines the spaces that a ship occupies according to its name
+     * @return espaciosMachine int
+     */
+    public int getEspacioQueOcupa(String barco) {
+        switch (barco) {
+            case "Portaaviones" -> espaciosMachine = 4;
+            case "Submarino" -> espaciosMachine = 3;
+            case "Destructor" -> espaciosMachine = 2;
+            case "Fragata" -> espaciosMachine = 1;
         }
         return espaciosMachine;
     }
