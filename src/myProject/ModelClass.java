@@ -202,7 +202,6 @@ public class ModelClass
         return orientacion;
     }
 
-}
 
     /**
      public void setTableroInfPrincipalM(String[][] tableroInfPrincipalM) {
