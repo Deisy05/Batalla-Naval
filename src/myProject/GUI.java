@@ -30,7 +30,7 @@ public class GUI extends JFrame {
     private  JButton []vehiculo;
     private int interfaz, casillasFlota,vacio;
     private JButton[][] tableroPosicionU, tableroPrincipalU, tableroPosicionEnemigo;
-
+    private boolean turnoEnemigo;
     private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
@@ -48,6 +48,7 @@ public class GUI extends JFrame {
         casillasFlota = 0;
         nombreFlota = new String[]{"Portaaviones", "Submarino", "Destructor", "Fragata"};
         cantidadFlota = new int[]{1, 1, 1, 1};
+        turnoEnemigo=false;
 
         this.setContentPane(new Canvas()); // to Paint the background image of the Frame
         initGUI();
@@ -229,6 +230,9 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Este metodo crea el territorio vacio del enemigo
+     */
     private void pintarTableroEnemigo(){
         tableroEnemigo= new JPanel(new GridBagLayout());
         tableroEnemigo.setPreferredSize(new Dimension(480, 500));
@@ -626,19 +630,57 @@ public class GUI extends JFrame {
     }
 
     /**
-     * Method in order to load the information that displays in panelChoice
+     * Este metodo cambia las casillas del tablero principal por un indicador segun el disparo
      */
-    private void pintarPanelEleccion() {
+    private void pintarDisparo(JButton[][] tablero, int posicionX, int posicionY) {
 
+        switch (modelClass.getIndicador()){
+            case "agua" -> {
+                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/agua.png"));
+                tablero[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                        46,
+                        Image.SCALE_SMOOTH)));
+                if(!turnoEnemigo){
+                    disparoMaquina();
+                }else {
+                    turnoEnemigo = false;
+                }
+            }
+            case "tocado"->{
+                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/bomb.png"));
+                tablero[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                        46,
+                        Image.SCALE_SMOOTH)));
+
+            }
+            case "hundido"->{
+                String [][] matrixDisparos= modelClass.getTableroPosMaquina();
+                for (int i = 0; i < 10 ; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if(matrixDisparos[i][j]== "hundido"){
+                            img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores" +
+                                    "/fire2.png"));
+                            tablero[i][j].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
+                                    46,
+                                    Image.SCALE_SMOOTH)));
+                        }
+
+                    }
+                }
+
+
+                //validarFinPartida(){}
+
+            }
+        }
     }
 
-    /**
-     * Shows the images of the ships that will be located at the beginning
-     */
-    private void pintarOpcionAlineacion() {
-
-
+    public void disparoMaquina() {
+        turnoEnemigo=true;
+        modelClass.setTableroInfPosicionU();
+        pintarDisparo(tableroPosicionU, modelClass.getCoordenadaXMaquina(), modelClass.getCoordenadaYMaquina());
     }
+
 
     /**
      * adds the listener to the 100 buttons
@@ -706,6 +748,8 @@ public class GUI extends JFrame {
                 panelDerecho.remove(iniciar);
                 pintarTableroPrincipal();
                 opcionTerritorioEnemigo(); //sale después de ordenar la flota
+                addEscucha(tableroPrincipalU);
+                interfaz=2;
                 revalidate();
                 repaint();
             }
@@ -745,7 +789,6 @@ public class GUI extends JFrame {
                             if (tableroPosicionU[i][j] == e.getSource()) {
                                 //once found, it is checked to see if it can be added to the underlying positions
                                 if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota, casillasFlota)) {
-                                    System.out.println("tipo de flota usuario "+ tipoFlota + " orientacion usuario: "+ orientacion);
                                     pintarFlotaTableroPosicion(tableroPosicionU,i, j);
                                     eliminarOpcionFlota();
                                     modelClass.ingresarBarcosMaquina();
@@ -753,7 +796,6 @@ public class GUI extends JFrame {
                                     orientacion= modelClass.getOrientacionMaquina();
                                     casillasFlota= modelClass.getEspaciosQueOcupaMaquina();
 
-                                    System.out.println("tipo flota maquina: "+tipoFlota+" orientacion maquina: " +orientacion+" casillas que ocupa: " +casillasFlota);
                                     pintarFlotaTableroPosicion(tableroPosicionEnemigo,
                                             modelClass.getCoordenadaXMaquina(),modelClass.getCoordenadaYMaquina());
                                     panelDerecho2.removeAll();
@@ -779,7 +821,20 @@ public class GUI extends JFrame {
                         }
                     }
                 }
+                case 2->{
+                    for (int i = 0; i < 10 ; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if(e.getSource() == tableroPrincipalU[i][j]){
+                                modelClass.setTableroInfPrincipalU(1,i,j);
+                                tableroPrincipalU[i][j].removeActionListener(escucha);
+                                pintarDisparo(tableroPrincipalU,i,j);
+                                pintarDisparo(tableroPosicionEnemigo,i,j);
+                            }
 
+                        }
+                    }
+
+                }
 
             }
 
@@ -789,16 +844,5 @@ public class GUI extends JFrame {
             }
         }
 
-        private void setDisparo(ActionEvent disparo){
-            for (int i = 0; i < 10 ; i++) {
-                for (int j = 0; j < 10; j++) {
-                    if(disparo.getSource() == tableroPrincipalU[i][j]){
-                        modelClass.setTableroInfPrincipalU(i,j);
-                       // pintarTableroPrincipal(modelClass.getTableroInfPrincipalU());
-                    }
-
-                }
-            }
-        }
     }
 }
