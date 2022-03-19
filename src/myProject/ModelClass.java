@@ -184,16 +184,6 @@ public class ModelClass
         return tableroPosMaquina;
     }
 
-    public void setTableroInfPrincipalU(int disparoX, int disparoY){
-        if(tableroPosMaquina[disparoX][disparoY].equals("")){
-            tableroInfPrincipalU[disparoX][disparoY]="agua";
-            setTableroPosicion(tableroPosMaquina,"agua",disparoX,disparoY);
-        }
-        else {
-            //falta implementar
-        }
-
-    }
     /**
      public void setTableroInfPrincipalM(String[][] tableroInfPrincipalM) {
      this.tableroInfPrincipalM = tableroInfPrincipalM;
@@ -258,6 +248,53 @@ public class ModelClass
             case "fragata" -> espacio = 1;
         }
         return espacio;
+    }
+
+    public void setTableroInfPrincipalU(int disparoX, int disparoY)
+    {
+        if (tableroPosMaquina[disparoX][disparoY].equals("")) {
+            tableroInfPrincipalU[disparoX][disparoY] = "agua";
+            setTableroPosicion(tableroPosMaquina, "agua", disparoX, disparoY);
+        } else {
+            String miPrimerClicked = tableroPosMaquina[disparoX][disparoY];
+            if (!miPrimerClicked.substring(miPrimerClicked.indexOf(".") + 1, miPrimerClicked.indexOf(".") + 2).equals("T")) {
+                tableroPosMaquina[disparoX][disparoY] = miPrimerClicked.substring(0, miPrimerClicked.indexOf(".")) + ".T"
+                        + miPrimerClicked.substring(miPrimerClicked.indexOf("."));
+                miPrimerClicked = tableroPosMaquina[disparoX][disparoY];
+                if (hundimiento(disparoX, disparoY)) {
+                    String tipoBarco = miPrimerClicked.substring(0, miPrimerClicked.indexOf("."));
+                    int espacio = getEspacio(tipoBarco);
+                    int ultimaPos;
+                    int parteBarco = Integer.valueOf(miPrimerClicked.substring(miPrimerClicked.lastIndexOf(".") + 1));
+
+                    if (miPrimerClicked.substring(miPrimerClicked.indexOf(".") + 3, miPrimerClicked.indexOf(".") + 4).equals("H")) {
+                        if (parteBarco == espacio) {
+                            ultimaPos = disparoX;
+                        } else {
+                            ultimaPos = disparoX + espacio - parteBarco;
+                        }
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosMaquina[ultimaPos - espacio + i][disparoY] = "hundido";
+                            tableroInfPrincipalU[ultimaPos - espacio + i][disparoY] = "hundido";
+                        }
+                    } else {
+                        if (parteBarco == espacio) {
+                            ultimaPos = disparoY;
+                        } else {
+                            ultimaPos = disparoY + espacio - parteBarco;
+                        }
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosMaquina[disparoX][ultimaPos - espacio + i] = "hundido";
+                            tableroInfPrincipalU[disparoX][ultimaPos - espacio + i] = "hundido";
+                        }
+                    }
+                } else {
+                    tableroInfPrincipalU[disparoX][disparoY] = "tocado";
+                }
+            }
+
+        }
+
     }
 
 }
