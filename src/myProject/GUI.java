@@ -206,7 +206,6 @@ public class GUI extends JFrame {
 
     /**
      * This method adds 100 buttons to tableroPosicion for the first time, when the array is created
-     *
      */
     private void pintarTableroPosicion()
     {
@@ -462,6 +461,7 @@ public class GUI extends JFrame {
 
     /**
      * This method has the purpose of modifying the images displayed by the buttons
+     * @param posicionPlayer matrix of player
      * @param posicionEnX es la posicion inicial X en la matriz
      * @param posicionEnY es la posicion inicial Y en la matriz
      */
@@ -483,6 +483,7 @@ public class GUI extends JFrame {
                     posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
                             46,
                             Image.SCALE_SMOOTH)));
+
                     posicionEnX++;
                 }
                 case "vertical" -> {
@@ -668,6 +669,7 @@ public class GUI extends JFrame {
     }
 
 
+
     /**
      * Main process of the Java program
      *
@@ -688,7 +690,8 @@ public class GUI extends JFrame {
         int opcionIniciar=0;
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
 
             if (e.getSource()==salir){
                 System.exit(0);
@@ -777,11 +780,24 @@ public class GUI extends JFrame {
                     }
                 }
 
+
             }
 
             if(e.getSource()== verTerritorioEnemigo){
                 JOptionPane.showMessageDialog(null, tableroEnemigo, "TABLERO DE POSICIÓN DEL ENEMIGO",
                         JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+
+        private void setDisparo(ActionEvent disparo){
+            for (int i = 0; i < 10 ; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if(disparo.getSource() == tableroPrincipalU[i][j]){
+                        modelClass.setTableroInfPrincipalU(i,j);
+                       // pintarTableroPrincipal(modelClass.getTableroInfPrincipalU());
+                    }
+
+                }
             }
         }
     }
