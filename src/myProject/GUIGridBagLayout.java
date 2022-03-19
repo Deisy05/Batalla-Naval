@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class GUIGridBagLayout extends JFrame {
     private Header headerProject;
@@ -14,8 +15,8 @@ public class GUIGridBagLayout extends JFrame {
     private ModelGame modelGame;
     private Escucha escucha;
     private JButton horizontal, vertical, iniciar, territorioEnemigo, volver;
-    private int interfaz, posicionFlota;
-    private JButton[][] tableroPosicionU, tableroPosicionM;
+    private int interfaz, posicionFlota, disparoX, disparoY;
+    private JButton[][] tableroPosicionU, tableroPrincipalU;
     private JTextArea cantidadFlotas, ayuda;
     private int[] cantidadFlota;
     private String[] nombreFlota;
@@ -28,14 +29,13 @@ public class GUIGridBagLayout extends JFrame {
     public GUIGridBagLayout() {
         interfaz = 0;
         tableroPosicionU = new JButton[10][10];
-        tableroPosicionM = new JButton[10][10];
+        tableroPrincipalU = new JButton[10][10];
         posicionFlota = 0;
-        nombreFlota = new String[] { "Portaaviones", "Submarinos", "Destructores", "Fragatas" };
-        cantidadFlota = new int[] { 1, 2, 3, 4 };
+        nombreFlota = new String[]{"Portaaviones", "Submarinos", "Destructores", "Fragatas"};
+        cantidadFlota = new int[]{1, 2, 3, 4};
         initGUI();
-        // setIconImage(new
-        // ImageIcon(getClass().getResource("/resources/logo.png")).getImage());
-        // Default JFrame configuration
+        //setIconImage(new ImageIcon(getClass().getResource("/resources/logo.png")).getImage());
+        //Default JFrame configuration
         this.setTitle("Batalla Naval");
         this.pack();
         this.setResizable(false);
@@ -49,7 +49,7 @@ public class GUIGridBagLayout extends JFrame {
      * create Listener and control Objects used for the GUI class
      */
     private void initGUI() {
-        // Set up JFrame Container's Layout
+        //Set up JFrame Container's Layout
         this.getContentPane().setLayout(new GridBagLayout());
         constrains = new GridBagConstraints();
 
@@ -125,7 +125,9 @@ public class GUIGridBagLayout extends JFrame {
 
         pintarOpcionAlineacion();
         horizontal.addActionListener(escucha);
-        horizontal.setBackground(null);
+        horizontal.setBackground(new Color(221, 244, 252));
+
+        horizontal.setBorderPainted(false);
         constrains.gridx = 0;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
@@ -133,18 +135,20 @@ public class GUIGridBagLayout extends JFrame {
         constrains.anchor = GridBagConstraints.CENTER;
         panelEleccion.add(horizontal, constrains);
 
+
         ayuda.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         ayuda.setBackground(null);
         ayuda.setEditable(false);
         constrains.gridx = 0;
         constrains.gridy = 2;
-        constrains.gridwidth = 2;
+        constrains.gridwidth =2;
         constrains.fill = GridBagConstraints.NONE;
         constrains.anchor = GridBagConstraints.CENTER;
         panelEleccion.add(ayuda, constrains);
 
         vertical.addActionListener(escucha);
-        vertical.setBackground(null);
+        vertical.setBackground(new Color(221, 244, 252));
+        vertical.setBorderPainted(false);
         constrains.gridx = 1;
         constrains.gridy = 1;
         constrains.gridwidth = 1;
@@ -155,8 +159,7 @@ public class GUIGridBagLayout extends JFrame {
     }
 
     /**
-     * add the 100 buttons to tableroPosicion for the first time, when the interface
-     * is being created
+     * add the 100 buttons to tableroPosicion for the first time, when the interface is being created
      */
     private void pintarTableroPosicion() {
         if (interfaz == 0) {
@@ -176,7 +179,7 @@ public class GUIGridBagLayout extends JFrame {
                     tableroPosicion.add(tableroPosicionU[i][j], constrainsPosicion);
                 }
             }
-        } else if (interfaz == 2) {
+        } else if(interfaz == 2){
             tableroPosicion.removeAll();
             GridBagConstraints constrainsPosicion = new GridBagConstraints();
             constrainsPosicion.weightx = 40;
@@ -198,59 +201,47 @@ public class GUIGridBagLayout extends JFrame {
     }
 
     /**
-     * modifies the images displayed by the buttons with respect to what is in the
-     * matrix parameter
-     *
+     * modifies the images displayed by the buttons with respect to what is in the matrix parameter
      * @param matrix with the changes to be made
      */
     private void pintarTableroPosicion(String[][] matrix) {
-
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (!matrix[i][j].equals("")) {
-                    tableroPosicionU[i][j].setIcon(new ImageIcon(
-                            getClass().getResource("/resources/barcos.fraccion/" + matrix[i][j] + ".png")));
+                    tableroPosicionU[i][j].setIcon(new ImageIcon(getClass().getResource("/resources/barcos.fraccion/" + matrix[i][j] + ".png")));
                 }
-
             }
         }
-
         repaint();
         revalidate();
     }
 
-    private void pintarTableroPrincipal() {
-        if (interfaz == 2) {
-            // addEscucha(tableroPosicionM);
+    private void pintarTableroPrincipal(){
+        if(interfaz == 2){
             GridBagConstraints constrainsPosicionDerecha = new GridBagConstraints();
             constrainsPosicionDerecha.weightx = 40;
             constrainsPosicionDerecha.weighty = 40;
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    tableroPosicionM[i][j] = new JButton();
-                    tableroPosicionM[i][j].setBackground(new Color(30, 124, 236));
-                    tableroPosicionM[i][j].setPreferredSize(new Dimension(40, 40));
+            for(int i=0; i<10; i++){
+                for(int j=0; j<10; j++){
+                    tableroPrincipalU[i][j] = new JButton();
+                    tableroPrincipalU[i][j].setBackground(new Color(30, 124, 236));
+                    tableroPrincipalU[i][j].setPreferredSize(new Dimension(40, 40));
                     constrainsPosicionDerecha.gridx = i;
                     constrainsPosicionDerecha.gridy = j;
                     constrainsPosicionDerecha.gridwidth = 1;
                     constrainsPosicionDerecha.fill = GridBagConstraints.NONE;
                     constrainsPosicionDerecha.anchor = GridBagConstraints.CENTER;
-                    tableroPrincipal.add(tableroPosicionM[i][j], constrainsPosicionDerecha);
+                    tableroPrincipal.add(tableroPrincipalU[i][j], constrainsPosicionDerecha);
                 }
             }
-            addEscucha(tableroPosicionM);
-
         }
     }
 
-    public void pintarTableroPrincipal(String[][] matrixTabPrincipal) {
-        if (interfaz == 2) {
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    if (matrixTabPrincipal[i][j] != "") {
-                        tableroPosicionM[i][j].setIcon(new ImageIcon(
-                                getClass().getResource("/resources/disparos/" + matrixTabPrincipal[i][j] + ".png")));
-                    }
+    public void pintarTableroPrincipal(String[][] matrixTabPrincipal){
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (matrixTabPrincipal[i][j] != "") {
+                    tableroPrincipalU[i][j].setIcon(new ImageIcon(getClass().getResource("/resources/disparos/" + matrixTabPrincipal[i][j] + ".png")));
                 }
             }
         }
@@ -269,41 +260,38 @@ public class GUIGridBagLayout extends JFrame {
                 case "Destructores" -> tipoFlota = "destructor";
                 case "Fragatas" -> tipoFlota = "fragata";
             }
-            int espacio = 0;
-            switch (tipoFlota) {
-                case "portaaviones" -> espacio = 4;
-                case "submarino" -> espacio = 3;
-                case "destructor" -> espacio = 2;
-                case "fragata" -> espacio = 1;
+            int espacio=0;
+            switch (tipoFlota){
+                case "portaaviones"-> espacio=4;
+                case "submarino"-> espacio=3;
+                case "destructor"-> espacio=2;
+                case "fragata"-> espacio=1;
             }
-            cantidadFlotas.setText("      Tienes " + cantidadFlota[posicionFlota] + " " + nombreFlota[posicionFlota]
-                    + "\nCada uno ocupa " + espacio + " posiciones.");
-            ayuda.setText("Selecciona la orientacion de tu\n                  " + tipoFlota);
+            cantidadFlotas.setText("      Tienes " + cantidadFlota[posicionFlota] + " " + nombreFlota[posicionFlota]+"\nCada uno ocupa "+espacio+" posiciones.");
+            ayuda.setText("Selecciona la orientacion de tu\n                  "+tipoFlota);
             cantidadFlota[posicionFlota]--;
         }
     }
-
     /**
      * show the images to choose the alignment
      */
     private void pintarOpcionAlineacion() {
         String direccion = "";
         switch (nombreFlota[posicionFlota]) {
-            case "Portaaviones" -> direccion = "/resources/portaaviones.";
-            case "Submarinos" -> direccion = "/resources/submarino.";
-            case "Destructores" -> direccion = "/resources/destructor.";
-            case "Fragatas" -> direccion = "/resources/fragata.";
+            case "Portaaviones" -> direccion = "/resources/blanco.";
+            case "Submarinos" -> direccion = "/resources/blanco.";
+            case "Destructores" -> direccion = "/resources/blanco.";
+            case "Fragatas" -> direccion = "/resources/blanco.";
         }
         if (interfaz == 0) {
             interfaz = 1;
         }
-        horizontal.setIcon(new ImageIcon(getClass().getResource(direccion + "H.png")));
-        vertical.setIcon(new ImageIcon(getClass().getResource(direccion + "V.png")));
+        horizontal.setIcon(new ImageIcon(getClass().getResource(direccion + "png")));
+        vertical.setIcon(new ImageIcon(getClass().getResource(direccion + "png")));
     }
 
     /**
      * adds the listener to the 100 buttons
-     *
      * @param matrix where the buttons are
      */
     private void addEscucha(JButton[][] matrix) {
@@ -317,7 +305,6 @@ public class GUIGridBagLayout extends JFrame {
 
     /**
      * remove the listener to the 100 buttons
-     *
      * @param matrix where the buttons are
      */
     private void removeEscucha(JButton[][] matrix) {
@@ -342,9 +329,7 @@ public class GUIGridBagLayout extends JFrame {
     }
 
     /**
-     * inner class that extends an Adapter Class or implements Listeners used by GUI
-     * class, in charge of monitoring the user's actions with the program and
-     * updating the interface and the game accordingly.
+     * inner class that extends an Adapter Class or implements Listeners used by GUI class, in charge of monitoring the user's actions with the program and updating the interface and the game accordingly.
      */
 
     private class Escucha implements ActionListener {
@@ -354,28 +339,26 @@ public class GUIGridBagLayout extends JFrame {
             if (interfaz == 1) {
                 if (posicionFlota < 4) {
                     /**
-                     * in the first interface there are only 102 buttons, the two to select the
-                     * alignment and the 100 to choose the position.
+                     * in the first interface there are only 102 buttons, the two to select the alignment and the 100 to choose the position.
                      */
                     if (e.getSource() == horizontal) {
                         orientacion = "horizontal";
                         addEscucha(tableroPosicionU);
                         horizontal.removeActionListener(escucha);
                         vertical.removeActionListener(escucha);
-                        ayuda.setText("Selecciona donde deseas\n posicionar tu " + tipoFlota);
+                        ayuda.setText("Selecciona donde deseas\n posicionar tu "+tipoFlota);
                     } else if (e.getSource() == vertical) {
                         orientacion = "vertical";
                         addEscucha(tableroPosicionU);
                         horizontal.removeActionListener(escucha);
                         vertical.removeActionListener(escucha);
-                        ayuda.setText("Selecciona donde deseas\n posicionar tu " + tipoFlota);
+                        ayuda.setText("Selecciona donde deseas\n posicionar tu "+tipoFlota);
                     } else {
-                        // check which of the 100 buttons was clicked
+                        //check which of the 100 buttons was clicked
                         for (int i = 0; i < 10; i++) {
                             for (int j = 0; j < 10; j++) {
                                 if (tableroPosicionU[i][j] == e.getSource()) {
-                                    // once found, it is checked to see if it can be added to the underlying
-                                    // positions
+                                    //once found, it is checked to see if it can be added to the underlying positions
                                     if (modelGame.ingresarBarcoUsuario(i, j, orientacion, tipoFlota)) {
                                         pintarTableroPosicion(modelGame.getTableroPosUsuario());
                                         if (cantidadFlota[posicionFlota] == 0) {
@@ -383,7 +366,7 @@ public class GUIGridBagLayout extends JFrame {
                                             if (posicionFlota < 4) {
                                                 pintarOpcionAlineacion();
                                             }
-                                            // when the entire fleet was positioned
+                                            //when the entire fleet was positioned
                                             else {
                                                 iniciar = new JButton("Iniciar");
                                                 iniciar.addActionListener(escucha);
@@ -395,12 +378,11 @@ public class GUIGridBagLayout extends JFrame {
                                                 panelIzquierdo.add(iniciar, constrains);
 
                                                 panelDerecho.removeAll();
-                                                ayuda.setText(
-                                                        "Bienvenid@ a Batalla Naval\n      Presiona 'Iniciar'    ");
+                                                ayuda.setText("Bienvenid@ a Batalla Naval\n      Presiona 'Iniciar'    ");
                                                 ayuda.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
                                                 constrains.gridx = 0;
                                                 constrains.gridy = 0;
-                                                constrains.gridwidth = 2;
+                                                constrains.gridwidth =2;
                                                 constrains.fill = GridBagConstraints.NONE;
                                                 constrains.anchor = GridBagConstraints.CENTER;
                                                 panelDerecho.add(ayuda, constrains);
@@ -416,16 +398,15 @@ public class GUIGridBagLayout extends JFrame {
                                         horizontal.addActionListener(escucha);
                                         vertical.addActionListener(escucha);
                                     } else {
-                                        JOptionPane.showMessageDialog(tableroPosicion,
-                                                "No se pudo posicionar la flota porque " + modelGame.getError(),
-                                                "Error", JOptionPane.ERROR_MESSAGE);
+                                        JOptionPane.showMessageDialog(tableroPosicion, "No se pudo posicionar la flota porque "+modelGame.getError(), "Error", JOptionPane.ERROR_MESSAGE);
                                     }
                                 }
                             }
                         }
                     }
                 }
-            } else if (e.getSource() == iniciar) {
+            }
+            else if (e.getSource() == iniciar) {
                 panelIzquierdo.remove(iniciar);
                 panelDerecho.remove(ayuda);
                 headerProject.setText("Selecciona a donde apuntas tu cañones");
@@ -444,16 +425,16 @@ public class GUIGridBagLayout extends JFrame {
                 panelDerecho.add(tableroPrincipal, constrains);
                 pintarTableroPrincipal();
 
-                territorioEnemigo = new JButton("Territorio enemigo");
+                territorioEnemigo = new JButton("Ver territorio enemigo");
                 constrains.gridx = 0;
                 constrains.gridy = 1;
                 constrains.gridwidth = 1;
                 constrains.fill = GridBagConstraints.NONE;
                 constrains.anchor = GridBagConstraints.CENTER;
                 territorioEnemigo.addActionListener(escucha);
-                panelIzquierdo.add(territorioEnemigo, constrains);
+                panelIzquierdo.add(territorioEnemigo,constrains);
 
-                volver = new JButton("Tu territorio");
+                volver = new JButton("Volver a tu territorio");
                 volver.setVisible(false);
                 constrains.gridx = 0;
                 constrains.gridy = 1;
@@ -461,26 +442,46 @@ public class GUIGridBagLayout extends JFrame {
                 constrains.fill = GridBagConstraints.NONE;
                 constrains.anchor = GridBagConstraints.CENTER;
                 volver.addActionListener(escucha);
-                panelIzquierdo.add(volver, constrains);
-            } else if (interfaz == 2) {
-                if (e.getSource() == territorioEnemigo) {
+                panelIzquierdo.add(volver,constrains);
+
+                addEscucha(tableroPrincipalU);
+            }
+            else if (interfaz == 2){
+                if (e.getSource() == territorioEnemigo){
                     territorioEnemigo.setVisible(false);
                     volver.setVisible(true);
                     pintarTableroPosicion();
                     pintarTableroPosicion(modelGame.getTableroPosMaquina());
-                } else if (e.getSource() == volver) {
+                    interfaz=3;
+                }
+                else{
+                    setDisparo(e);
+                    pintarTableroPosicion();
+                    pintarTableroPosicion(modelGame.getTableroPosUsuario());
+                }
+            }
+            else if (interfaz==3){
+                if(e.getSource() == volver){
+                    interfaz=2;
                     volver.setVisible(false);
                     territorioEnemigo.setVisible(true);
                     pintarTableroPosicion();
                     pintarTableroPosicion(modelGame.getTableroPosUsuario());
-                } else {
-                    for (int i = 0; i < 10; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            if (e.getSource() == tableroPosicionM[i][j]) {
-                                System.out.println("Tocado");
-                            }
-                        }
+                }else{
+                    setDisparo(e);
+                    pintarTableroPosicion();
+                    pintarTableroPosicion(modelGame.getTableroPosMaquina());
+                }
+            }
+        }
+        private void setDisparo(ActionEvent disparo){
+            for (int i = 0; i < 10 ; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if(disparo.getSource() == tableroPrincipalU[i][j]){
+                        modelGame.setTableroInfPrincipalU(i,j);
+                        pintarTableroPrincipal(modelGame.getTableroInfPrincipalU());
                     }
+
                 }
             }
         }

@@ -28,7 +28,7 @@ public class GUI extends JFrame {
             elegirSubmarino,elegirDestructor, elegirFragata;
     private  JButton []vehiculo;
     private int interfaz, casillasFlota,vacio;
-    private JButton[][] tableroPosicionU, tableroPosicionM;
+    private JButton[][] tableroPosicionU, tableroPosicionM, tableroPrincipalU;
     private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
@@ -670,7 +670,8 @@ public class GUI extends JFrame {
         int opcionIniciar=0;
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
 
             if (e.getSource()==salir){
                 System.exit(0);
@@ -752,6 +753,18 @@ public class GUI extends JFrame {
 
             }
 
+        }
+
+        private void setDisparo(ActionEvent disparo){
+            for (int i = 0; i < 10 ; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if(disparo.getSource() == tableroPrincipalU[i][j]){
+                        modelClass.setTableroInfPrincipalU(i,j);
+                       // pintarTableroPrincipal(modelClass.getTableroInfPrincipalU());
+                    }
+
+                }
+            }
         }
     }
 }
