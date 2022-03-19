@@ -4,13 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
+
+
+/**
+ * This class is designed in order to view ModelClass
+ *
+ * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
+ *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
+ * @version v.1.0.0 date: 07/03/2022
+ */
 
 public class GUIGridBagLayout extends JFrame {
     private Header headerProject;
-    private JPanel panelIzquierdo;
-    private JPanel panelDerecho;
-    private JPanel tableroPosicion;
-    private JPanel tableroPrincipal;
+    private JPanel panelIzquierdo, panelDerecho, tableroPosicion, tableroPrincipal;
     private ModelGame modelGame;
     private Escucha escucha;
     private JButton horizontal, vertical, iniciar, territorioEnemigo, volver;
@@ -30,8 +37,8 @@ public class GUIGridBagLayout extends JFrame {
         tableroPosicionU = new JButton[10][10];
         tableroPosicionM = new JButton[10][10];
         posicionFlota = 0;
-        nombreFlota = new String[] { "Portaaviones", "Submarinos", "Destructores", "Fragatas" };
-        cantidadFlota = new int[] { 1, 2, 3, 4 };
+        nombreFlota = new String[]{"Portaaviones", "Submarino", "Destructor", "Fragata"};
+        cantidadFlota = new int[]{1, 2, 3, 4};
         initGUI();
         // setIconImage(new
         // ImageIcon(getClass().getResource("/resources/logo.png")).getImage());
@@ -483,6 +490,7 @@ public class GUIGridBagLayout extends JFrame {
                     }
                 }
             }
+
         }
     }
 }

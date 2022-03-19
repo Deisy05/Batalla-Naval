@@ -7,7 +7,8 @@ public class Machine {
     private int estaFlota, espaciosMachine;
 
     public Machine() {
-        flota = new String[]{"portaaviones","submarino","submarino","destructor","destructor","destructor","fragata","fragata","fragata","fragata"};
+        flota = new String[]{"Portaaviones","Submarino","Submarino","Destructor","Destructor","Destructor","Fragata",
+                "Fragata","Fragata","Fragata"};
         estaFlota = 0;
     }
     // toma aleatoria de barcos
@@ -36,12 +37,12 @@ public class Machine {
         return random.nextInt(0,10);
     }
 
-    public int getEspacioQueOcupa() {
-        switch (getBarco()) {
-            case "portaaviones" -> espaciosMachine = 4;
-            case "submarino" -> espaciosMachine = 3;
-            case "destructor" -> espaciosMachine = 2;
-            case "fragata" -> espaciosMachine = 1;
+    public int getEspacioQueOcupa( String barco) {
+        switch (barco) {
+            case "Portaaviones" -> espaciosMachine = 4;
+            case "Submarino" -> espaciosMachine = 3;
+            case "Destructor" -> espaciosMachine = 2;
+            case "Fragata" -> espaciosMachine = 1;
         }
         return espaciosMachine;
     }

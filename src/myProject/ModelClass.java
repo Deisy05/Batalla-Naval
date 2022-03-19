@@ -8,11 +8,10 @@ package myProject;
  */
 public class ModelClass
 {
-    private String[][] tableroPosUsuario;
-    private String[][] tableroPosMaquina;
-    private String[][] posicionDisparos;
+    private String[][] tableroPosUsuario, tableroPosMaquina, tableroInfPrincipalU, tableroInfPrincipalM ;
     private Machine machine;
-    private String error;
+    private String error, barcoMaquina, orientacion;
+    private int coordenadaX,coordenadaY,espaciosQueOcupa;
 
     public ModelClass()
     {
@@ -33,6 +32,21 @@ public class ModelClass
 
         machine = new Machine();
 
+
+        tableroInfPrincipalU= new String[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                tableroInfPrincipalU[i][j]="";
+            }
+        }
+
+        tableroInfPrincipalM= new String[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                tableroInfPrincipalM[i][j]="";
+            }
+        }
+
     }
 
     /**
@@ -52,7 +66,7 @@ public class ModelClass
 
     private boolean ubicarBarco(String [][] tableroPlayer, int posicionHorizontal, int posicionVertical, String alineacion, String barco,
                                 int espacioQueOcupa){
-        boolean answer = false;
+        boolean answer = true;
 
         //checks if the initial position (marked by the user) is empty
         if (!tableroPlayer[posicionHorizontal][posicionVertical].equals("")){
@@ -71,10 +85,6 @@ public class ModelClass
                         answer=false;
                         error="una de las posiciones que ocuparía tu "+barco+" ya está en uso.";
                     }
-                    //after having carried out all the revisions, it is verified that the boat can be added.
-                    else if(i== posicionHorizontal + espacioQueOcupa-1){
-                        answer=true;
-                    }
                 }
             }
         }
@@ -90,16 +100,12 @@ public class ModelClass
                         answer=false;
                         error="una de las posiciones que ocuparía tu "+barco+" ya está en uso.";
                     }
-                    //after having carried out all the revisions, it is verified that the boat can be added.
-                    else if(i== posicionVertical + espacioQueOcupa-1){
-                        answer=true;
-                    }
                 }
             }
         }
         if(answer)
         {
-            setTableroPosUsuario(tableroPlayer,posicionHorizontal, posicionVertical, alineacion, barco, espacioQueOcupa);
+            setTableroPosicion(tableroPlayer,posicionHorizontal, posicionVertical, alineacion, barco, espacioQueOcupa);
         }
         return answer;
     }
@@ -113,7 +119,8 @@ public class ModelClass
      * @param barco vessel name to add
      * @param espacio space occupied by the ship
      */
-    private void setTableroPosUsuario(String[][] _tableroPlayer, int posicionHorizontal, int posicionVertical, String alineacion, String barco, int espacio) {
+    private void setTableroPosicion(String[][] _tableroPlayer, int posicionHorizontal, int posicionVertical,
+                               String alineacion, String barco, int espacio) {
         int contador=1;
         if (alineacion.equals("horizontal")){
             for (int i = posicionHorizontal; i < posicionHorizontal + espacio; i++) {
@@ -130,10 +137,37 @@ public class ModelClass
     }
 
     /**
-     * @return the matrix with the information of where the user's fleet is positioned.
+     *
+     * @param disparoX
+     * @param disparoY
      */
-    public String[][] getTableroPosUsuario() {
-        return tableroPosUsuario;
+    public void setTableroInfPrincipalU(int disparoX, int disparoY){
+        if(tableroPosMaquina[disparoX][disparoY].equals("")){
+            tableroInfPrincipalU[disparoX][disparoY]="agua";
+            setTableroPosicion(tableroPosMaquina,"agua",disparoX,disparoY);
+        }
+        else {
+            //falta implementar
+        }
+
+    }
+
+    /**
+     *
+     * @param matrix
+     * @param opcionAPintar
+     * @param disparoX
+     * @param disparoY
+     */
+    private void setTableroPosicion(String[][] matrix,String opcionAPintar,int disparoX,int disparoY){
+        /**
+         *  String informacionBarco =matrix[posicionH][posicionV];
+         *         String barcoTocado=informacionBarco.substring(0,informacionBarco.indexOf("."))+".T"+informacionBarco.substring(informacionBarco.indexOf("."));informacionBarco=barcoTocado;
+         *
+         */
+        if(opcionAPintar.equals("agua")){
+            matrix[disparoX][disparoY]="agua";
+        }
     }
 
     /**
@@ -145,14 +179,42 @@ public class ModelClass
 
     public void ingresarBarcosMaquina()
     {
-        for (int i = 0; i <10 ; i++) {
-            String barcoMaquina = machine.getBarco();
-            while(!ubicarBarco(tableroPosMaquina,machine.getCoordenadaX(), machine.getCoordenadaY(), machine.getOrientacion(), barcoMaquina,machine.getEspacioQueOcupa())){
-            }
+        barcoMaquina= machine.getBarco();
+        espaciosQueOcupa= machine.getEspacioQueOcupa(barcoMaquina);
+        orientacion = machine.getOrientacion();
+        coordenadaX = machine.getCoordenadaX();
+        coordenadaY= machine.getCoordenadaY();
+
+        while(!ubicarBarco(tableroPosMaquina,coordenadaX, coordenadaY, orientacion,
+        barcoMaquina, espaciosQueOcupa)){
+            orientacion = machine.getOrientacion();
+            coordenadaX = machine.getCoordenadaX();
+            coordenadaY= machine.getCoordenadaY();
         }
+
     }
 
-    public String[][] getTableroPosMaquina() {
-        return tableroPosMaquina;
+
+
+
+    public String getBarcoMaquina(){
+        return barcoMaquina;
     }
+
+    public  int getCoordenadaXMaquina(){
+        return coordenadaX;
+    }
+
+    public  int getCoordenadaYMaquina(){
+        return coordenadaY;
+    }
+
+    public int getEspaciosQueOcupaMaquina(){
+        return espaciosQueOcupa;
+    }
+
+    public String getOrientacionMaquina(){
+        return orientacion;
+    }
+
 }
