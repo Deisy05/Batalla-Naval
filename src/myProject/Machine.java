@@ -11,7 +11,7 @@ import java.util.Random;
 public class Machine
 {
     private String[] flota;
-    private int estaFlota, espaciosMachine;
+    private int estaFlota, disparoX, disparoY, espaciosMachine;
 
     public Machine()
     {
@@ -63,6 +63,17 @@ public class Machine
      * @return Y coordinate
      */
     public int getCoordenadaY(){
+        Random random = new Random();
+        return random.nextInt(0,10);
+    }
+
+    public void prepararDisparo(String[][] matrix){
+    }
+    public int getDisparoX(){
+        Random random = new Random();
+        return random.nextInt(0,10);
+    }
+    public int getDisparoY(){
         Random random = new Random();
         return random.nextInt(0,10);
     }
