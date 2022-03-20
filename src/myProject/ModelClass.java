@@ -132,6 +132,8 @@ public class ModelClass
         return tableroPosMaquina;
     }
 
+    public String[][] getTableroPosUsuario(){return tableroPosUsuario;}
+
     /**
      * @return the reason why the boat could not be added
      */
@@ -213,7 +215,6 @@ public class ModelClass
                 }
                 for (int i = 0; i < espacio; i++) {
                     esteDato = tablero[ultimaPos - i][disparoY];
-                    System.out.println("ESTA ES LA INFO DE LA CASILLA: "+ esteDato);
                     if (!esteDato.substring(esteDato.indexOf(".") + 1, esteDato.indexOf(".") + 2).equals("T")) {
                         hundido = false;
                     }
@@ -297,7 +298,7 @@ public class ModelClass
         }
     }
 
-    public void setTableroInfPosicionU(){
+    public boolean setTableroInfPosicionU(){
         coordenadaX= machine.getCoordenadaX();
         coordenadaY=machine.getCoordenadaY();
         String contenidoCasilla =tableroPosUsuario[coordenadaX][coordenadaY];
@@ -318,6 +319,8 @@ public class ModelClass
             coordenadaY=machine.getCoordenadaY();
         }
         setTableroInfPrincipalU(2,coordenadaX, coordenadaY);
+
+        return true;
     }
 
     public String getIndicador() {

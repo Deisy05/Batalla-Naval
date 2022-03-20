@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
  *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
- * @version v.1.0.1 date: 16/03/2022
+ * @version v.1.0.2 date: 20/03/2022
  */
 
 public class GUI extends JFrame {
@@ -30,7 +30,6 @@ public class GUI extends JFrame {
     private  JButton []vehiculo;
     private int interfaz, casillasFlota,vacio;
     private JButton[][] tableroPosicionU, tableroPrincipalU, tableroPosicionEnemigo;
-    private boolean turnoEnemigo;
     private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
@@ -48,7 +47,6 @@ public class GUI extends JFrame {
         casillasFlota = 0;
         nombreFlota = new String[]{"Portaaviones", "Submarino", "Destructor", "Fragata"};
         cantidadFlota = new int[]{1, 1, 1, 1};
-        turnoEnemigo=false;
 
         this.setContentPane(new Canvas()); // to Paint the background image of the Frame
         initGUI();
@@ -236,7 +234,6 @@ public class GUI extends JFrame {
     private void pintarTableroEnemigo(){
         tableroEnemigo= new JPanel(new GridBagLayout());
         tableroEnemigo.setPreferredSize(new Dimension(480, 500));
-        tableroEnemigo.setOpaque(false);
 
         if (interfaz == 0) {
             GridBagConstraints constrainsPosicion = new GridBagConstraints();
@@ -246,6 +243,7 @@ public class GUI extends JFrame {
                     tableroPosicionEnemigo[i][j] = new JButton();
                     tableroPosicionEnemigo[i][j].setBackground(new Color(5, 182, 198));
                     tableroPosicionEnemigo[i][j].setPreferredSize(new Dimension(46, 46));
+
                     constrainsPosicion.gridx = i;
                     constrainsPosicion.gridy = j;
                     constrainsPosicion.gridwidth = 1;
@@ -483,19 +481,13 @@ public class GUI extends JFrame {
             switch (orientacion){
                 case "horizontal" -> {
                     direccion+= "H "+p+".png";
-                    img = new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion)));
-                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
-                            46,
-                            Image.SCALE_SMOOTH)));
+                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion))));
 
                     posicionEnX++;
                 }
                 case "vertical" -> {
                     direccion += "V " + p + ".png";
-                    img = new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion)));
-                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
-                            46,
-                            Image.SCALE_SMOOTH)));
+                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion))));
                     posicionEnY++;
                 }
             }
@@ -632,53 +624,94 @@ public class GUI extends JFrame {
     /**
      * Este metodo cambia las casillas del tablero principal por un indicador segun el disparo
      */
-    private void pintarDisparo(JButton[][] tablero, int posicionX, int posicionY) {
+    private void pintarDisparo(int posicionX, int posicionY, String quienDispara) {
 
-        switch (modelClass.getIndicador()){
+        switch (modelClass.getIndicador()) {
             case "agua" -> {
-                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/agua.png"));
-                tablero[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
-                        46,
-                        Image.SCALE_SMOOTH)));
-                if(!turnoEnemigo){
+
+                if(Objects.equals(quienDispara, "jugador")){
+
+                    System.out.println("HAS DISPARADO AGUA"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources/indicadores/agua.png")));
+                    tableroPrincipalU[posicionX][posicionY].setIcon(img);
+                    tableroPosicionEnemigo[posicionX][posicionY].setIcon(img);
+
+                disparoMaquina();
+                }else if(Objects.equals(quienDispara, "maquina")) {
+                    System.out.println("EL ENEMIGO DISPARÓ AGUA"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources/indicadores/x.png")));
+                    tableroPosicionU[posicionX][posicionY].setIcon(img);
+
+
+                }
+            }
+            case "tocado" -> {
+
+                if (Objects.equals(quienDispara, "jugador")){
+                    System.out.println("DISPARASTE Y TOCASTE BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources" +
+                                    "/indicadores/bomb.png")));
+                    tableroPrincipalU[posicionX][posicionY].setIcon(img);
+                    tableroPosicionEnemigo[posicionX][posicionY].setIcon(img);
+
+
+                }else if (Objects.equals(quienDispara, "maquina")) {
+                    System.out.println("EL ENEMIGO DISPARO Y TOCO BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources/indicadores/bombEnemy.png")));
+                    tableroPosicionU[posicionX][posicionY].setIcon(img);
+
                     disparoMaquina();
-                }else {
-                    turnoEnemigo = false;
                 }
             }
-            case "tocado"->{
-                img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores/bomb.png"));
-                tablero[posicionX][posicionY].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
-                        46,
-                        Image.SCALE_SMOOTH)));
+            case "hundido" -> {
 
-            }
-            case "hundido"->{
-                String [][] matrixDisparos= modelClass.getTableroPosMaquina();
-                for (int i = 0; i < 10 ; i++) {
-                    for (int j = 0; j < 10; j++) {
-                        if(matrixDisparos[i][j]== "hundido"){
-                            img = new ImageIcon(getClass().getResource("/myProject/resources/indicadores" +
-                                    "/fire2.png"));
-                            tablero[i][j].setIcon(new ImageIcon(img.getImage().getScaledInstance(46,
-                                    46,
-                                    Image.SCALE_SMOOTH)));
+                String[][] matrixDisparos;
+                if (Objects.equals(quienDispara, "jugador")){
+                    System.out.println("HUNDISTE UN BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    matrixDisparos = modelClass.getTableroPosMaquina();
+                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources/indicadores" +
+                                    "/fire2.png")));
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if (matrixDisparos[i][j] == "hundido") {
+                                tableroPrincipalU[i][j].setIcon(img);
+                                tableroPosicionEnemigo[i][j].setIcon(img);
+                            }
                         }
-
                     }
+                }else if(Objects.equals(quienDispara, "maquina")){
+                    System.out.println("EL ENEMIGO HUNDIO UN BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
+                    matrixDisparos= modelClass.getTableroPosUsuario();
+                    img=new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                            "/myProject/resources/indicadores" +
+                                    "/hundidoE.png")));
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if (matrixDisparos[i][j] == "hundido") {
+                                tableroPosicionU[i][j].setIcon(img);
+                            }
+                        }
+                    }
+                    disparoMaquina();
                 }
-
-
                 //validarFinPartida(){}
-
             }
+
+
         }
     }
 
     public void disparoMaquina() {
-        turnoEnemigo=true;
-        modelClass.setTableroInfPosicionU();
-        pintarDisparo(tableroPosicionU, modelClass.getCoordenadaXMaquina(), modelClass.getCoordenadaYMaquina());
+            System.out.println("EL ENEMIGO HA DISPARADO: "+modelClass.setTableroInfPosicionU());
+            System.out.println("coordenada x: "+modelClass.getCoordenadaXMaquina()+ " coordenada y: "+modelClass.getCoordenadaYMaquina());
+
+            pintarDisparo(modelClass.getCoordenadaXMaquina(), modelClass.getCoordenadaYMaquina(),
+                    "maquina");
     }
 
 
@@ -825,15 +858,14 @@ public class GUI extends JFrame {
                     for (int i = 0; i < 10 ; i++) {
                         for (int j = 0; j < 10; j++) {
                             if(e.getSource() == tableroPrincipalU[i][j]){
+                                System.out.println("HAS DISPARADO");
                                 modelClass.setTableroInfPrincipalU(1,i,j);
                                 tableroPrincipalU[i][j].removeActionListener(escucha);
-                                pintarDisparo(tableroPrincipalU,i,j);
-                                pintarDisparo(tableroPosicionEnemigo,i,j);
+                                pintarDisparo(i,j,"jugador");
                             }
 
                         }
                     }
-
                 }
 
             }
