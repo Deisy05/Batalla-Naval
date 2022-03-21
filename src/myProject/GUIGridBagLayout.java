@@ -324,7 +324,7 @@ public class GUIGridBagLayout extends JFrame {
                                                 panelIzquierdo.add(iniciar, constrains);
 
                                                 panelDerecho.removeAll();
-                                                ayuda.setText("Bienvenid@ a Batalla Naval\n      Presiona 'Iniciar'    ");
+                                                ayuda.setText("Presiona 'Iniciar'    ");
                                                 ayuda.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
                                                 constrains.gridx = 0;
                                                 constrains.gridy = 0;
