@@ -514,6 +514,17 @@ public class GUI extends JFrame
         }
 
     }
+//    private void pintarFlotaTableroPosicion(String[][] matrix) {
+//            for (int i = 0; i < 10; i++) {
+//                for (int j = 0; j < 10; j++) {
+//                    if (!matrix[i][j].equals("")) {
+//                        tableroPosicionU[i][j].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("src/myProject/resources/misBarcos/bomb.png"/* + "bomb" + ".png"*/))));
+//                    }
+//                }
+//            }
+//            repaint();
+//            revalidate();
+//        }
 
     /**
      * Este método confirma si aún está disponible determinado tipo de vehículo
@@ -807,6 +818,7 @@ public class GUI extends JFrame
                             if (tableroPosicionU[i][j] == e.getSource()) {
                                 //once found, it is checked to see if it can be added to the underlying positions
                                 if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota, casillasFlota)) {
+                                    //pintarFlotaTableroPosicion(modelClass.getTableroPosUsuario());
                                     pintarFlotaTableroPosicion(tableroPosicionU,i, j);
                                     eliminarOpcionFlota();
                                     modelClass.ingresarBarcosMaquina();
@@ -814,8 +826,7 @@ public class GUI extends JFrame
                                     orientacion= modelClass.getOrientacionMaquina();
                                     casillasFlota= modelClass.getEspaciosQueOcupaMaquina();
 
-                                    pintarFlotaTableroPosicion(tableroPosicionEnemigo,
-                                            modelClass.getCoordenadaXMaquina(),modelClass.getCoordenadaYMaquina());
+                                    pintarFlotaTableroPosicion(tableroPosicionEnemigo, modelClass.getCoordenadaXMaquina(),modelClass.getCoordenadaYMaquina());
                                     panelDerecho2.removeAll();
                                     removeEscucha(tableroPosicionU);
                                     remove(panelDerecho2);
