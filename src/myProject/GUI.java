@@ -674,7 +674,7 @@ public class GUI extends JFrame {
                 labelInstrucciones = new JLabel();
                 ImageIcon image = new ImageIcon(
                         Objects.requireNonNull(getClass().getResource("/myProject/resources/manual.jpeg")));
-                labelInstrucciones.setIcon(new ImageIcon(image.getImage().getScaledInstance(600, 480,
+                labelInstrucciones.setIcon(new ImageIcon(image.getImage().getScaledInstance(400, 500,
                         Image.SCALE_SMOOTH)));
 
                 JOptionPane.showMessageDialog(null, labelInstrucciones, null, JOptionPane.PLAIN_MESSAGE);
@@ -787,9 +787,10 @@ public class GUI extends JFrame {
             }
             if (e.getSource() == ayuda)
             {
+                //manal de instrucciones
                 JLabel labelAyuda = new JLabel();
                 ImageIcon image = new ImageIcon(
-                        Objects.requireNonNull(getClass().getResource("/myProject/resources/helping.jpeg")));
+                        Objects.requireNonNull(getClass().getResource("/myProject/resources/helping2.jpeg")));
                 labelAyuda.setIcon(new ImageIcon(image.getImage().getScaledInstance(600, 680,
                         Image.SCALE_SMOOTH)));
 
