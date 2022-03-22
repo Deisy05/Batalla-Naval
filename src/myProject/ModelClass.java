@@ -1,36 +1,54 @@
 package myProject;
 
 /**
- * This class is designed in order to applies the game rules
+ * This class is designed in order to apply the game rules
  * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
  *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
- * @version v.1.0.1 date: 16/03/2022
+ * @version v.1.0.4 date: 21/03/2022
  */
 public class ModelClass
 {
-    private String[][] tableroPosUsuario, tableroPosMaquina, tableroInfPrincipalU, tableroInfPrincipalM ;
+    private String[][] tableroPosicionUsuario, tableroPosicionMaquina, tableroInformacionPrincipalU, tableroInfPrincipalM ;
     private Machine machine;
-    private String error, barcoMaquina, orientacion, indicador;
-    private int coordenadaX,coordenadaY,espaciosQueOcupa;
+    private String error, barcoMaquina, orientacion, indicador, winner ="";
+    private int coordenadaX,coordenadaY;
+    private int contadorMaquina = 0, contadorUsuario = 0;
 
+    /**
+     * Constructor of ModelGame class
+     */
     public ModelClass()
     {
         //initializes the matrix to "" to paint the representing button as water
-        tableroPosUsuario= new String[10][10];
+        tableroPosicionUsuario = new String[10][10];
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                tableroPosUsuario[i][j]="";
+                tableroPosicionUsuario[i][j]="";
             }
         }
 
-        tableroPosMaquina= new String[10][10];
+        tableroPosicionMaquina = new String[10][10];
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                tableroPosMaquina[i][j]="";
+                tableroPosicionMaquina[i][j]="";
             }
         }
 
         machine = new Machine();
+
+        tableroInformacionPrincipalU = new String[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                tableroInformacionPrincipalU[i][j] = "";
+            }
+        }
+
+        tableroInfPrincipalM = new String[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                tableroInfPrincipalM[i][j] = "";
+            }
+        }
 
     }
 
@@ -40,35 +58,41 @@ public class ModelClass
      * @param posicionVertical the vertical position where you want to start painting the boat
      * @param alineacion "horizontal" or "vertical"
      * @param barco vessel name to add
-     * @param espacioQueOcupa número de casillas por tipo de flota
      * @return whether it is possible or not
      */
 
-    public boolean crearTerritorioDelUsuario(int posicionHorizontal,int posicionVertical,String alineacion, String barco,int espacioQueOcupa){
-        return ubicarBarco(tableroPosUsuario,posicionHorizontal,posicionVertical,alineacion,barco, espacioQueOcupa);
+    public boolean crearTerritorioDelUsuario(int posicionHorizontal,int posicionVertical,String alineacion, String barco){
+        return ubicarBarco(tableroPosicionUsuario,posicionHorizontal,posicionVertical,alineacion,barco);
 
     }
 
-    private boolean ubicarBarco(String [][] tableroPlayer, int posicionHorizontal, int posicionVertical, String alineacion, String barco,
-                                int espacioQueOcupa)
-    {
+    /**
+     * checks if the vessel can be added to the underlying positions
+     * @param tableroPlayer player board
+     * @param posicionHorizontal the horizontal position where you want to start
+     *                           painting the boat
+     * @param posicionVertical   the vertical position where you want to start
+     *                           painting the boat
+     * @param alineacion         "horizontal" or "vertical"
+     * @param barco              vessel name to add
+     * @return whether it is possible or not
+     */
+    private boolean ubicarBarco(String [][] tableroPlayer, int posicionHorizontal, int posicionVertical, String alineacion, String barco){
         boolean answer = true;
-
+        int espacio = getEspacioQueOcupa(barco);
         //checks if the initial position (marked by the user) is empty
         if (!tableroPlayer[posicionHorizontal][posicionVertical].equals("")){
             answer = false;
             error="esta posicion ya está en uso";
         }
-        else if(alineacion.equals("horizontal"))
-        {
+        else if(alineacion.equals("horizontal")){
             //check that the initial position marked by the user part of the fleet is not left out.
-            if(posicionHorizontal+espacioQueOcupa>10){
+            if(posicionHorizontal+espacio>10){
                 answer=false;
-                error="el "+barco+" ocupa "+espacioQueOcupa+" espacios. Trata con al menos "+(posicionHorizontal+espacioQueOcupa-10)+" posiciones hacia la izquierda.";
-            }else
-            {
-                for (int i = posicionHorizontal; i < posicionHorizontal + espacioQueOcupa; i++) {
-                    //check that all positions where the boat would be are empty.
+                error="el "+barco+" ocupa "+espacio+" espacios. Trata con al menos "+(posicionHorizontal+espacio-10)+" posiciones hacia la izquierda.";
+            }else {
+                for (int i = posicionHorizontal; i < posicionHorizontal + espacio; i++) {
+                    //check that all positions where the boat would be been empty.
                     if(!tableroPlayer[i][posicionVertical].equals("")){
                         answer=false;
                         error="una de las posiciones que ocuparía tu "+barco+" ya está en uso.";
@@ -76,14 +100,13 @@ public class ModelClass
                 }
             }
         }
-        else if(alineacion.equals("vertical"))
-        {
+        else if(alineacion.equals("vertical")){
             //check that the initial position marked by the user part of the fleet is not left out.
-            if(posicionVertical+espacioQueOcupa>10){
+            if(posicionVertical+espacio>10){
                 answer=false;
-                error="el "+barco+" ocupa "+espacioQueOcupa+" espacios. Trata con al menos "+(posicionVertical+espacioQueOcupa-10)+" posiciones hacia arriba.";
+                error="el "+barco+" ocupa "+espacio+" espacios. Trata con al menos "+(posicionVertical+espacio-10)+" posiciones hacia arriba.";
             }else {
-                for (int i = posicionVertical; i < posicionVertical + espacioQueOcupa; i++) {
+                for (int i = posicionVertical; i < posicionVertical + espacio; i++) {
                     //check that all positions where the boat would be are empty.
                     if(!tableroPlayer[posicionHorizontal][i].equals("")){
                         answer=false;
@@ -94,7 +117,7 @@ public class ModelClass
         }
         if(answer)
         {
-            setTableroPosicion(tableroPlayer,posicionHorizontal, posicionVertical, alineacion, barco, espacioQueOcupa);
+            setTableroPosicion(tableroPlayer,posicionHorizontal, posicionVertical, alineacion, barco, espacio);
         }
         return answer;
     }
@@ -109,18 +132,15 @@ public class ModelClass
      * @param espacio space occupied by the ship
      */
     private void setTableroPosicion(String[][] _tableroPlayer, int posicionHorizontal, int posicionVertical,
-                                    String alineacion, String barco, int espacio)
-    {
+                                    String alineacion, String barco, int espacio) {
         int contador=1;
         if (alineacion.equals("horizontal")){
-            //System.out.println("linea 126 modelclass");
             for (int i = posicionHorizontal; i < posicionHorizontal + espacio; i++) {
                 _tableroPlayer[i][posicionVertical]=barco+".H."+contador;
                 contador++;
             }
         }
         else{
-            //System.out.println("linea 133 model class");
             for (int i = posicionVertical; i < posicionVertical + espacio; i++) {
                 _tableroPlayer[posicionHorizontal][i]=barco+".V."+contador;
                 contador++;
@@ -130,115 +150,93 @@ public class ModelClass
     }
 
     /**
-     * @return the matrix with the information of where the user's fleet is
-     *         positioned.
+     * @return the matrix with the information of where the user's fleet is positioned.
      */
-    public String[][] getTableroPosUsuario() {
-        return tableroPosUsuario;
+    public String[][] getTableroPosicionUsuario()
+    {
+        return tableroPosicionUsuario;
     }
 
-    /**
-     * @return the matrix with the information of where the machine's fleet is positioned.
-     */
-    public String[][] getTableroPosMaquina()
-    {
-        return tableroPosMaquina;
-    }
 
     /**
      * @return the reason why the boat could not be added
      */
-    public String getError(){
-        return error;
-    }
-
-    public void ingresarBarcosMaquina()
+    public String getError()
     {
-        barcoMaquina = machine.getBarco();
-        espaciosQueOcupa= machine.getEspacioQueOcupa(barcoMaquina);
-        orientacion = machine.getOrientacion();
-        coordenadaX = machine.getCoordenadaX();
-        coordenadaY= machine.getCoordenadaY();
-
-        while(!ubicarBarco(tableroPosMaquina,coordenadaX, coordenadaY, orientacion, barcoMaquina, espaciosQueOcupa)){
-            orientacion = machine.getOrientacion();
-            coordenadaX = machine.getCoordenadaX();
-            coordenadaY= machine.getCoordenadaY();
-        }
-
-    }
-
-    public String getBarcoMaquina(){
-        return barcoMaquina;
-    }
-
-    public  int getCoordenadaXMaquina(){
-        return coordenadaX;
-    }
-
-    public  int getCoordenadaYMaquina(){
-        return coordenadaY;
-    }
-
-    public int getEspaciosQueOcupaMaquina(){
-        return espaciosQueOcupa;
-    }
-
-    public String getOrientacionMaquina(){
-        return orientacion;
+        return error;
     }
 
 
     /**
-     public void setTableroInfPrincipalM(String[][] tableroInfPrincipalM) {
-     this.tableroInfPrincipalM = tableroInfPrincipalM;
-     }
-     **/
-    public String[][] getTableroInfPrincipalU() {
-        return tableroInfPrincipalU;
+     * Enter each ship of the machine in its respective matrix
+     */
+    public void ingresarBarcosMaquina()
+    {
+        for (int i = 0; i < 10; i++) {
+            String barcoMaquina = machine.getBarco();
+            while (!ubicarBarco(tableroPosicionMaquina, machine.getCoordenadaX(), machine.getCoordenadaY(),
+                    machine.getOrientacion(), barcoMaquina)) {
+            }
+        }
     }
 
-    private boolean hundimiento(String[][] tablero,int disparoX, int disparoY)
-    {
-        boolean hundido;
-        String informacion = tablero[disparoX][disparoY];
-        String tipoBarco = informacion.substring(0, informacion.indexOf("."));
-        String tipoAlineacion = informacion.substring(informacion.indexOf(".") + 3, informacion.indexOf(".") + 4);
+
+    /**
+     * @return the matrix with the information of where the machine's fleet is positioned.
+     */
+    public String[][] getTableroPosicionMaquina() {
+        return tableroPosicionMaquina;
+    }
+
+    /**
+     * checks the moment when a ship is being sunk
+     * @param matrixPosEnemigo
+     * @param disparoX
+     * @param disparoY
+     * @param matrixPrincipalJugador
+     * @return whether it's marked as sunk or not
+     */
+    private boolean hundimiento(String[][] matrixPosEnemigo, int disparoX, int disparoY, String[][] matrixPrincipalJugador) {
+        boolean hundido = false;
+        String informacion = matrixPosEnemigo[disparoX][disparoY];
+        String nombreDelBarco = informacion.substring(0, informacion.indexOf("."));
+        String alineacionInfo = informacion.substring(informacion.indexOf(".") + 3, informacion.indexOf(".") + 4);
         int parteBarco = Integer.parseInt(informacion.substring(informacion.lastIndexOf(".") + 1));
-        int espacio = getEspacio(tipoBarco);
+        int espacio = getEspacioQueOcupa(nombreDelBarco);
 
         if (espacio == 1) {
-            tablero[disparoX][disparoY] = "hundido";
+            matrixPosEnemigo[disparoX][disparoY] = "hundido";
+            matrixPrincipalJugador[disparoX][disparoY] = "hundido";
             hundido = true;
         } else {
-            int ultimaPos;
+            int ultimaPosicion;
             hundido = true;
-            String esteDato;
+            String informacionAux;
 
-            if (tipoAlineacion.equals("H")) {
+            if (alineacionInfo.equals("H")) {
                 if (parteBarco == espacio) {
-                    ultimaPos = disparoX;
+                    ultimaPosicion = disparoX;
                 } else {
-                    ultimaPos = disparoX + espacio - parteBarco;
+                    ultimaPosicion = disparoX + espacio - parteBarco;
                 }
-                for (int i = 0; i < espacio; i++) {
-                    esteDato = tablero[ultimaPos - i][disparoY];
-                    //probando por consola
-                    System.out.println("Info de la casilla: "+ esteDato);
-                    if (esteDato.charAt(esteDato.indexOf(".") + 1) != 'T') {
+                for (int i = 1; i <= espacio; i++) {
+                    informacionAux = matrixPosEnemigo[ultimaPosicion - espacio + i][disparoY];
+                    if (informacionAux.charAt(informacionAux.indexOf(".") + 1) != 'T') {
                         hundido = false;
+                        break;
                     }
                 }
             } else {
                 if (parteBarco == espacio) {
-                    ultimaPos = disparoY;
+                    ultimaPosicion = disparoY;
                 } else {
-                    ultimaPos = disparoY + espacio - parteBarco;
+                    ultimaPosicion = disparoY + espacio - parteBarco;
                 }
-                for (int i = 0; i < espacio; i++) {
-                    esteDato = tablero[disparoX][ultimaPos - i];
-                    if (esteDato.charAt(esteDato.indexOf(".") + 1) != 'T') {
+                for (int i = 1; i <= espacio; i++) {
+                    informacionAux = matrixPosEnemigo[disparoX][ultimaPosicion - espacio + i];
+                    if (informacionAux.charAt(informacionAux.indexOf(".") + 1) != 'T') {
                         hundido = false;
+                        break;
                     }
                 }
             }
@@ -246,57 +244,123 @@ public class ModelClass
         return hundido;
     }
 
-    private int getEspacio(String tipoBarco) {
+    /**
+     * to obtain the number of squares that each ship occupies within the matrix
+     * @param nameBarco name of boat
+     * @return space used by each boat
+     */
+    private int getEspacioQueOcupa(String nameBarco) {
         int espacio = 0;
-        switch (tipoBarco) {
-            case "Portaaviones" -> espacio = 4;
-            case "Submarino" -> espacio = 3;
-            case "Destructor" -> espacio = 2;
-            case "Fragata" -> espacio = 1;
+        switch (nameBarco) {
+            case "portaaviones" -> espacio = 4;
+            case "submarino" -> espacio = 3;
+            case "destructor" -> espacio = 2;
+            case "fragata" -> espacio = 1;
         }
         return espacio;
     }
-
-    public void setTableroInfPrincipalU(int queTableroPlayer,int disparoX, int disparoY)
+    /**
+     * to establish in which of the three options the user made the shot (agua,
+     * tocado o si ya lo marca como hundido)
+     * check if the user can keep shooting or not
+     *
+     * @param disparoX
+     * @param disparoY
+     * @return whether the user continues with the turn or not
+     */
+    public boolean setTableroInformacionPrincipalUsuario(int disparoX, int disparoY)
     {
-        String [][] tablero;
-        if(queTableroPlayer==1){
-            tablero = tableroPosMaquina;
-        }else{
-            tablero =tableroPosUsuario;
-        }
-        if (tablero[disparoX][disparoY].equals(""))
-        {
-            tablero[disparoX][disparoY] = "agua";
-            indicador= "agua";
-        }
-        else
-        {
-            String miPrimerClicked = tablero[disparoX][disparoY];
-            if (miPrimerClicked.charAt(miPrimerClicked.indexOf(".") + 1) != 'T')
+        boolean sePuedeDisparar = false;
+        if (tableroPosicionMaquina[disparoX][disparoY].equals("")) {
+            tableroInformacionPrincipalU[disparoX][disparoY] = "agua";
+            tableroPosicionMaquina[disparoX][disparoY] = "agua";
+            sePuedeDisparar=true;
+        } else {
+            String primerClick = tableroPosicionMaquina[disparoX][disparoY];
+            if (!primerClick.equals("agua") && !primerClick.equals("hundido"))
             {
-                tablero[disparoX][disparoY] = miPrimerClicked.substring(0, miPrimerClicked.indexOf(".")) + ".T"
-                        + miPrimerClicked.substring(miPrimerClicked.indexOf("."));
-                miPrimerClicked = tablero[disparoX][disparoY];
-                if (hundimiento(tablero,disparoX, disparoY))
-                {
-                    String tipoBarco = miPrimerClicked.substring(0, miPrimerClicked.indexOf("."));
-                    int espacio = getEspacio(tipoBarco);
+                tableroPosicionMaquina[disparoX][disparoY] = primerClick.substring(0, primerClick.indexOf(".")) + ".T"
+                        + primerClick.substring(primerClick.indexOf("."));
+                primerClick = tableroPosicionMaquina[disparoX][disparoY];
+                if (hundimiento(tableroPosicionMaquina, disparoX, disparoY, tableroInformacionPrincipalU)) {
+                    String tipoBarco = primerClick.substring(0, primerClick.indexOf("."));
+                    int espacio = getEspacioQueOcupa(tipoBarco);
                     int ultimaPos;
-                    int parteBarco = Integer.parseInt(miPrimerClicked.substring(miPrimerClicked.lastIndexOf(".") + 1));
+                    int parteBarco = Integer.parseInt(primerClick.substring(primerClick.lastIndexOf(".") + 1));
 
-                    if (miPrimerClicked.charAt(miPrimerClicked.indexOf(".") + 3) == 'H') {
-                        if (parteBarco == espacio)
-                        {
+                    if (primerClick.charAt(primerClick.indexOf(".") + 3) == 'H') {
+                        if (parteBarco == espacio) {
                             ultimaPos = disparoX;
-                        } else
-                        {
+                        } else {
                             ultimaPos = disparoX + espacio - parteBarco;
                         }
-                        for (int i = 0; i < espacio; i++)
-                        {
-                            tablero[ultimaPos - i][disparoY] = "hundido";
-                            indicador= "hundido";
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosicionMaquina[ultimaPos - espacio + i][disparoY] = "hundido";
+                            tableroInformacionPrincipalU[ultimaPos - espacio + i][disparoY] = "hundido";
+                            contadorUsuario++;
+                        }
+                    } else {
+                        if (parteBarco == espacio) {
+                            ultimaPos = disparoY;
+                        } else {
+                            ultimaPos = disparoY + espacio - parteBarco;
+                        }
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosicionMaquina[disparoX][ultimaPos - espacio + i] = "hundido";
+                            tableroInformacionPrincipalU[disparoX][ultimaPos - espacio + i] = "hundido";
+                            contadorUsuario++;
+                        }
+                    }
+                } else {
+                    tableroInformacionPrincipalU[disparoX][disparoY] = "tocado";
+                }
+            }
+        }
+        return sePuedeDisparar;
+    }
+
+
+    public void dispararMaquina() {
+        setTableroInfPrincipalM(machine.getDisparoX(), machine.getDisparoY());
+        machine.generarDisparos(tableroInfPrincipalM);
+    }
+
+    /**
+     * performs computer triggering
+     *
+     * @param disparoX horizontal position where the shot will be fired
+     * @param disparoY vertical position where the shot will be fired
+     * @return if the shot could be fired
+     */
+    private void setTableroInfPrincipalM(int disparoX, int disparoY) {
+        if (tableroPosicionUsuario[disparoX][disparoY].equals("")) {
+            tableroInfPrincipalM[disparoX][disparoY] = "agua";
+            tableroPosicionUsuario[disparoX][disparoY] = "agua";
+        } else {
+            String clickEnElBoton = tableroPosicionUsuario[disparoX][disparoY];
+            if (!clickEnElBoton.equals("agua") && !clickEnElBoton.equals("hundido"))
+            {
+                tableroPosicionUsuario[disparoX][disparoY] = clickEnElBoton.substring(0, clickEnElBoton.indexOf(".")) + ".T"
+                        + clickEnElBoton.substring(clickEnElBoton.indexOf("."));
+                clickEnElBoton = tableroPosicionUsuario[disparoX][disparoY];
+                if (hundimiento(tableroPosicionUsuario, disparoX, disparoY, tableroInfPrincipalM))
+                {
+                    String tipoBarco = clickEnElBoton.substring(0, clickEnElBoton.indexOf("."));
+                    int espacio = getEspacioQueOcupa(tipoBarco);
+                    int ultimaPos;
+                    int parteBarco = Integer.parseInt(clickEnElBoton.substring(clickEnElBoton.lastIndexOf(".") + 1));
+
+                    if (clickEnElBoton.charAt(clickEnElBoton.indexOf(".") + 3) == 'H')
+                    {
+                        if (parteBarco == espacio) {
+                            ultimaPos = disparoX;
+                        } else {
+                            ultimaPos = disparoX + espacio - parteBarco;
+                        }
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosicionUsuario[ultimaPos - espacio + i][disparoY] = "hundido";
+                            tableroInfPrincipalM[ultimaPos - espacio + i][disparoY] = "hundido";
+                            contadorMaquina++;
                         }
                     } else
                     {
@@ -306,515 +370,59 @@ public class ModelClass
                         } else {
                             ultimaPos = disparoY + espacio - parteBarco;
                         }
-                        for (int i = 0; i < espacio; i++) {
-                            tablero[disparoX][ultimaPos - i] = "hundido";
-                            indicador= "hundido";
+                        for (int i = 1; i <= espacio; i++) {
+                            tableroPosicionUsuario[disparoX][ultimaPos - espacio + i] = "hundido";
+                            tableroInfPrincipalM[disparoX][ultimaPos - espacio + i] = "hundido";
+                            contadorMaquina++;
                         }
                     }
-                } else
-                {
-                    indicador= "tocado";
+                } else {
+                    tableroInfPrincipalM[disparoX][disparoY] = "tocado";
                 }
+                dispararMaquina();
             }
         }
     }
 
-    public void setTableroInfPosicionU()
-    {
-        coordenadaX= machine.getCoordenadaX();
-        coordenadaY=machine.getCoordenadaY();
-        String contenidoCasilla =tableroPosUsuario[coordenadaX][coordenadaY];
-        boolean estaTocado;
-        try{
-            if(contenidoCasilla.charAt(contenidoCasilla.indexOf(".") + 1) == 'T'){
-                estaTocado=true;
-            }else{
-                estaTocado=false;
+    /**
+     * to get the matrix where the user's trigger destination is saved (agua,
+     * tocado, hundido)
+     *
+     * @return matrix tableroInfPrincipalU
+     */
+    public String[][] getTableroInformacionPrincipalU() {
+        return tableroInformacionPrincipalU;
+    }
+
+
+    /**
+     * defines is there player who sank all the rival ships
+     *
+     * @return if there is a winner or not
+     */
+    public Boolean hayGanador() {
+        boolean hayGanador_ = false;
+        if (contadorUsuario == 20) {
+            hayGanador_ = true;
+        } else {
+            if (contadorMaquina == 20) {
+                hayGanador_ = true;
             }
-        }catch (Exception e){
-            estaTocado=false;
         }
-
-
-        while(contenidoCasilla.equals("agua")||contenidoCasilla.equals("hundido")||estaTocado)
-        {
-            coordenadaX=machine.getCoordenadaX();
-            coordenadaY=machine.getCoordenadaY();
-        }
-        setTableroInfPrincipalU(2,coordenadaX, coordenadaY);
+        return hayGanador_;
     }
 
-    public String getIndicador() {
-        return indicador;
+    /**
+     * Method that define the winner
+     * @return winner
+     */
+    public String getWinner() {
+        if (contadorMaquina == 20) {
+            winner = "maquina";
+        } else {
+            winner = "usuario";
+        }
+        return winner;
     }
+
 }
-
-
-//package myProject;
-//
-///**
-// * This class is designed in order to applies the game rules
-// * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
-// *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
-// * @version v.1.0.1 date: 16/03/2022
-// */
-//public class ModelClass
-//{
-//    private String[][] tableroPosUsuario, tableroPosMaquina, tableroInfPrincipalU, tableroInfPrincipalM;
-//    private String error, barcoMaquina, orientacion, indicador, ganador ="";
-//    private Machine machine;
-//    private int coordenadaX,coordenadaY,espaciosQueOcupa;
-//    private int contadorMaquina=0, contadorUsuario=0;
-//
-//
-//    /**
-//     * Constructor of ModelGame class
-//     */
-//    public ModelClass() {
-//        /*initializes the matrix to "" to paint the representing button as water*/
-//        tableroPosUsuario = new String[10][10];
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                tableroPosUsuario[i][j] = "";
-//            }
-//        }
-//
-//        tableroPosMaquina = new String[10][10];
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                tableroPosMaquina[i][j] = "";
-//            }
-//        }
-//
-//        machine = new Machine();
-//
-//        tableroInfPrincipalU = new String[10][10];
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                tableroInfPrincipalU[i][j] = "";
-//            }
-//        }
-//
-//        tableroInfPrincipalM = new String[10][10];
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10; j++) {
-//                tableroInfPrincipalM[i][j] = "";
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Checks if the ship can be added to the positions
-//     * @param posicionHorizontal the horizontal position where you want to start painting the boat
-//     * @param posicionVertical the vertical position where you want to start painting the boat
-//     * @param alineacion "horizontal" or "vertical"
-//     * @param barco vessel name to add
-//     * @param espacioQueOcupa número de casillas por tipo de flota
-//     * @return whether it is possible or not
-//     */
-//
-//    public boolean crearTerritorioDelUsuario(int posicionHorizontal,int posicionVertical,String alineacion, String barco,int espacioQueOcupa){
-//        return ubicarBarco(tableroPosUsuario,posicionHorizontal,posicionVertical,alineacion,barco, espacioQueOcupa);
-//
-//    }
-//
-//    private boolean ubicarBarco(String [][] tableroPlayer, int posicionHorizontal, int posicionVertical, String alineacion, String barco,
-//                                int espacioQueOcupa)
-//    {
-//        boolean answer = true;
-//
-//        //checks if the initial position (marked by the user) is empty
-//        if (!tableroPlayer[posicionHorizontal][posicionVertical].equals("")){
-//            answer = false;
-//            error="esta posicion ya está en uso";
-//        }
-//        else if(alineacion.equals("horizontal"))
-//        {
-//            //check that the initial position marked by the user part of the fleet is not left out.
-//            if(posicionHorizontal+espacioQueOcupa>10){
-//                answer=false;
-//                error="el "+barco+" ocupa "+espacioQueOcupa+" espacios. Trata con al menos "+(posicionHorizontal+espacioQueOcupa-10)+" posiciones hacia la izquierda.";
-//            }else
-//            {
-//                for (int i = posicionHorizontal; i < posicionHorizontal + espacioQueOcupa; i++) {
-//                    //check that all positions where the boat would be are empty.
-//                    if(!tableroPlayer[i][posicionVertical].equals("")){
-//                        answer=false;
-//                        error="una de las posiciones que ocuparía tu "+barco+" ya está en uso.";
-//                    }
-//                }
-//            }
-//        }
-//        else if(alineacion.equals("vertical"))
-//        {
-//            //check that the initial position marked by the user part of the fleet is not left out.
-//            if(posicionVertical+espacioQueOcupa>10){
-//                answer=false;
-//                error="el "+barco+" ocupa "+espacioQueOcupa+" espacios. Trata con al menos "+(posicionVertical+espacioQueOcupa-10)+" posiciones hacia arriba.";
-//            }else {
-//                for (int i = posicionVertical; i < posicionVertical + espacioQueOcupa; i++) {
-//                    //check that all positions where the boat would be are empty.
-//                    if(!tableroPlayer[posicionHorizontal][i].equals("")){
-//                        answer=false;
-//                        error="una de las posiciones que ocuparía tu "+barco+" ya está en uso.";
-//                    }
-//                }
-//            }
-//        }
-//        if(answer)
-//        {
-//            setTableroPosicion(tableroPlayer,posicionHorizontal, posicionVertical, alineacion, barco, espacioQueOcupa);
-//        }
-//        return answer;
-//    }
-//
-//
-//    /**
-//     * start adding the boat in the indicated position and alignment
-//     * @param _tableroPlayer matrix of a player
-//     * @param posicionHorizontal the horizontal position where you want to start painting the boat
-//     * @param posicionVertical the vertical position where you want to start painting the boat
-//     * @param alineacion "horizontal" or "vertical"
-//     * @param barco vessel name to add
-//     * @param espacio space occupied by the ship
-//     */
-//    private void setTableroPosicion(String[][] _tableroPlayer, int posicionHorizontal, int posicionVertical,
-//                                    String alineacion, String barco, int espacio)
-//    {
-//        int contador=1;
-//        if (alineacion.equals("horizontal")){
-//            //System.out.println("linea 126 modelclass");
-//            for (int i = posicionHorizontal; i < posicionHorizontal + espacio; i++) {
-//                _tableroPlayer[i][posicionVertical]=barco+".H."+contador;
-//                contador++;
-//            }
-//        }
-//        else{
-//            //System.out.println("linea 133 model class");
-//            for (int i = posicionVertical; i < posicionVertical + espacio; i++) {
-//                _tableroPlayer[posicionHorizontal][i]=barco+".V."+contador;
-//                contador++;
-//            }
-//        }
-//
-//    }
-//
-//    /**
-//     * @return the matrix with the information of where the user's fleet is positioned.
-//     */
-//    public String[][] getTableroPosUsuario() {
-//        return tableroPosUsuario;
-//    }
-//
-//    /**
-//     * @return the reason why the boat could not be added
-//     */
-//    public String getError() {
-//        return error;
-//    }
-//
-//    /**
-//     * Enter each ship of the machine in its respective matrix
-//     */
-//    public void crearTerritorioDelaMaquina()
-//    {
-//        for (int i = 0; i < 10; i++) {
-//            String barcoMaquina = machine.getBarco();
-//            while (!ubicarBarco(tableroPosMaquina, machine.getCoordenadaX(), machine.getCoordenadaY(), machine.getOrientacion(), barcoMaquina,espaciosQueOcupa)) {
-//            }
-//        }
-//
-//
-////        barcoMaquina = machine.getBarco();
-////        espaciosQueOcupa= machine.getEspacioQueOcupa(barcoMaquina);
-////        orientacion = machine.getOrientacion();
-////        coordenadaX = machine.getCoordenadaX();
-////        coordenadaY= machine.getCoordenadaY();
-////
-////        while(!ubicarBarco(tableroPosMaquina,coordenadaX, coordenadaY, orientacion, barcoMaquina, espaciosQueOcupa)){
-////            orientacion = machine.getOrientacion();
-////            coordenadaX = machine.getCoordenadaX();
-////            coordenadaY= machine.getCoordenadaY();
-////        }
-//
-//
-//    }
-//
-//    public String[][] getTableroPosMaquina() {
-//        return tableroPosMaquina;
-//    }
-//
-//    public String getBarcoMaquina(){
-//        return barcoMaquina;
-//    }
-//
-//    public  int getCoordenadaXMaquina(){
-//        return coordenadaX;
-//    }
-//
-//    public  int getCoordenadaYMaquina(){
-//        return coordenadaY;
-//    }
-//
-//    public int getEspaciosQueOcupaMaquina(){
-//        return espaciosQueOcupa;
-//    }
-//
-//    public String getOrientacionMaquina(){
-//        return orientacion;
-//    }
-//
-//    /**
-//     * to establish in which of the three options the user made the shot (agua, tocado o si ya  lo marca como hundido)
-//     * check if the user can keep shooting or not
-//     *
-//     * @param disparoX
-//     * @param disparoY
-//     * @return whether the user continues with the turn or not
-//     */
-//    public boolean setTableroInfPrincipalU(int disparoX, int disparoY){
-//        boolean sePuedeDisparar = true;
-//        if(tableroPosMaquina[disparoX][disparoY].equals("")){
-//            tableroInfPrincipalU[disparoX][disparoY]="agua";
-//            tableroPosMaquina[disparoX][disparoY] = "agua";
-//        }
-//        else{
-//            String miPrimerClicked =tableroPosMaquina[disparoX][disparoY];
-//            if (miPrimerClicked.substring(miPrimerClicked.indexOf(".")+1,miPrimerClicked.indexOf(".")+2).equals("T")){
-//                sePuedeDisparar=false;
-//            }
-//            else if(!miPrimerClicked.equals("agua") && !miPrimerClicked.equals("hundido")){
-//                System.out.println("1. "+miPrimerClicked);
-//                tableroPosMaquina[disparoX][disparoY] = miPrimerClicked.substring(0,miPrimerClicked.indexOf("."))+".T"+miPrimerClicked.substring(miPrimerClicked.indexOf("."));
-//                miPrimerClicked =tableroPosMaquina[disparoX][disparoY];
-//                if (hundimiento(tableroPosMaquina,disparoX,disparoY,tableroInfPrincipalU)){
-//                    String tipoBarco = miPrimerClicked.substring(0,miPrimerClicked.indexOf("."));
-//                    int espacio = getEspacio(tipoBarco);
-//                    int ultimaPos;
-//                    int parteBarco= Integer.valueOf(miPrimerClicked.substring(miPrimerClicked.lastIndexOf(".")+1));
-//
-//                    if (miPrimerClicked.substring(miPrimerClicked.indexOf(".") + 3, miPrimerClicked.indexOf(".") + 4).equals("H")){
-//                        if (parteBarco==espacio){
-//                            ultimaPos=disparoX;
-//                        }else {
-//                            ultimaPos=disparoX+espacio-parteBarco;
-//                        }
-//                        for (int i = 1; i <= espacio; i++) {
-//                            tableroPosMaquina[ultimaPos - espacio + i][disparoY]= "hundido";
-//                            tableroInfPrincipalU[ultimaPos - espacio + i][disparoY]= "hundido";
-//                            contadorUsuario++;
-//                        }
-//                    }else {
-//                        if (parteBarco==espacio){
-//                            ultimaPos=disparoY;
-//                        }else {
-//                            ultimaPos=disparoY+espacio-parteBarco;
-//                        }
-//                        for (int i = 1; i <= espacio; i++) {
-//                            tableroPosMaquina[disparoX][ultimaPos - espacio + i]= "hundido";
-//                            tableroInfPrincipalU[disparoX][ultimaPos - espacio + i]= "hundido";
-//                            contadorUsuario++;
-//                        }
-//                    }
-//                }
-//                else {
-//                    tableroInfPrincipalU[disparoX][disparoY]="tocado";
-//                }
-//            }
-//            else{
-//                sePuedeDisparar=false;
-//            }
-//        }
-//
-//        if (sePuedeDisparar){
-//            while (!setTableroInfPrincipalM(machine.getDisparoX(), machine.getDisparoY())) {
-//            }
-//        }
-//
-//        return sePuedeDisparar;
-//    }
-//
-//
-//    /**
-//     * checks the moment when a ship goes from being touched to being sunk
-//     *
-//     * @param matrixPosEnemigo
-//     * @param disparoX
-//     * @param disparoY
-//     * @param matrixPrinJugador
-//     * @return whether it's marked as sunk or not
-//     */
-//    private boolean hundimiento(String[][] matrixPosEnemigo,int disparoX, int disparoY, String[][] matrixPrinJugador)
-//    {
-//        boolean hundido = false;
-//        String informacion = matrixPosEnemigo[disparoX][disparoY];
-//        String tipoBarco = informacion.substring(0, informacion.indexOf("."));
-//        String tipoAlineacion = informacion.substring(informacion.indexOf(".") + 3, informacion.indexOf(".") + 4);
-//        int parteBarco= Integer.valueOf(informacion.substring(informacion.lastIndexOf(".")+1));
-//        int espacio = getEspacio(tipoBarco);
-//
-//        if (espacio == 1) {
-//            matrixPosEnemigo[disparoX][disparoY] = "hundido";
-//            matrixPrinJugador[disparoX][disparoY] = "hundido";
-//            hundido = true;
-//        } else {
-//            int ultimaPos;
-//            hundido = true;
-//            String esteDato;
-//
-//            if (tipoAlineacion.equals("H")) {
-//                if (parteBarco==espacio){
-//                    ultimaPos=disparoX;
-//                }
-//                else {
-//                    ultimaPos=disparoX+espacio-parteBarco;
-//                }
-//                for (int i = 1; i <= espacio; i++) {
-//                    esteDato = matrixPosEnemigo[ultimaPos - espacio + i][disparoY];
-//                    //probando por consola
-//                    System.out.println("Info de la casilla: "+ esteDato);
-//                    if (!esteDato.substring(esteDato.indexOf(".") + 1, esteDato.indexOf(".") + 2).equals("T")) {
-//                        hundido = false;
-//                        break;
-//                    }
-//                }
-//            }
-//            else {
-//                if (parteBarco==espacio){
-//                    ultimaPos=disparoY;
-//                }
-//                else {
-//                    ultimaPos=disparoY+espacio-parteBarco;
-//                }
-//                for (int i = 1; i <= espacio; i++) {
-//                    esteDato = matrixPosEnemigo[disparoX][ultimaPos - espacio + i];
-//                    if (!esteDato.substring(esteDato.indexOf(".") + 1, esteDato.indexOf(".") + 2).equals("T")) {
-//                        hundido = false;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        return hundido;
-//    }
-//
-//    /**
-//     * to obtain the number of squares that each ship occupies within the matrix
-//     * @param tipoBarco
-//     * @return space used by each boat
-//     */
-//    private int getEspacio(String tipoBarco) {
-//        int espacio = 0;
-//        switch (tipoBarco) {
-//            case "Portaaviones" -> espacio = 4;
-//            case "Submarino" -> espacio = 3;
-//            case "Destructor" -> espacio = 2;
-//            case "Fragata" -> espacio = 1;
-//        }
-//        return espacio;
-//    }
-//
-//
-//    /**
-//     * performs computer triggering
-//     * @param disparoX horizontal position where the shot will be fired
-//     * @param disparoY vertical position where the shot will be fired
-//     * @return if the shot could be fired
-//     */
-//    private boolean setTableroInfPrincipalM(int disparoX, int disparoY) {
-//        boolean sePuedeDisparar=true;
-//        if(tableroPosUsuario[disparoX][disparoY].equals("")){
-//            tableroInfPrincipalM[disparoX][disparoY]="agua";
-//            tableroPosUsuario[disparoX][disparoY] = "agua";
-//        }
-//        else{
-//            String primerClick =tableroPosUsuario[disparoX][disparoY];
-//            if (primerClick.substring(primerClick.indexOf(".")+1,primerClick.indexOf(".")+2).equals("T")){
-//                sePuedeDisparar=false;
-//            }
-//            else if(!primerClick.equals("agua") && !primerClick.equals("hundido")) {
-//                tableroPosUsuario[disparoX][disparoY] = primerClick.substring(0,primerClick.indexOf("."))+".T"+primerClick.substring(primerClick.indexOf("."));
-//                primerClick = tableroPosUsuario[disparoX][disparoY];
-//                if (hundimiento(tableroPosUsuario,disparoX,disparoY,tableroInfPrincipalM)){
-//                    String tipoBarco = primerClick.substring(0,primerClick.indexOf("."));
-//                    int espacio = getEspacio(tipoBarco);
-//                    int ultimaPos;
-//                    int parteBarco = Integer.valueOf(primerClick.substring(primerClick.lastIndexOf(".")+1));
-//
-//                    if (primerClick.substring(primerClick.indexOf(".") + 3, primerClick.indexOf(".") + 4).equals("H")){
-//                        if (parteBarco==espacio){
-//                            ultimaPos=disparoX;
-//                        }else {
-//                            ultimaPos=disparoX+espacio-parteBarco;
-//                        }
-//                        for (int i = 1; i <= espacio; i++) {
-//                            tableroPosUsuario[ultimaPos - espacio + i][disparoY]= "hundido";
-//                            tableroInfPrincipalM[ultimaPos - espacio + i][disparoY]= "hundido";
-//                            contadorMaquina++;
-//                        }
-//                    }else {
-//                        if (parteBarco==espacio){
-//                            ultimaPos=disparoY;
-//                        }else {
-//                            ultimaPos=disparoY+espacio-parteBarco;
-//                        }
-//                        for (int i = 1; i <= espacio; i++) {
-//                            tableroPosUsuario[disparoX][ultimaPos - espacio + i]= "hundido";
-//                            tableroInfPrincipalM[disparoX][ultimaPos - espacio + i]= "hundido";
-//                            contadorMaquina++;
-//                        }
-//                    }
-//                }
-//                else {
-//                    tableroInfPrincipalM[disparoX][disparoY]="tocado";
-//                }
-//            }
-//            else{
-//                sePuedeDisparar=false;
-//            }
-//        }
-//        return sePuedeDisparar;
-//    }
-//
-//    /**
-//     * to get the matrix where the user's trigger destination is saved (agua, tocado, hundido)
-//     * @return matrix tableroInfPrincipalU
-//     */
-//    public String[][] getTableroInfPrincipalU() {
-//        return tableroInfPrincipalU;
-//    }
-//
-//    /**
-//     * defines is there player who sank all the rival ships
-//     * @return if there is a winner or not
-//     */
-//    public Boolean hayGanador(){
-//        boolean answer=false;
-//        if(contadorUsuario == 20){
-//            answer = true;
-//        }else{
-//            if(contadorMaquina == 20){
-//                answer = true;
-//            }
-//        }
-//        return answer;
-//    }
-//
-//    /**
-//     * defines the winner of the game
-//     * @return winner
-//     */
-//    public String getGanador(){
-//        if(contadorMaquina == 20){
-//            ganador = "maquina";
-//        }else{
-//            ganador = "usuario";
-//        }
-//        return ganador;
-//    }
-//
-//    public String getIndicador() {
-//        return indicador;
-//    }
-//}
-

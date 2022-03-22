@@ -3,28 +3,24 @@ package myProject;
 import java.util.Random;
 
 /**
- * This class is designed in order to apply the random game rules of machine player
+ * This class is designed in order to generate the information for player "machine"
  * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
  *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
- * @version v.1.0.2 date: 16/03/2022
+ * @version v.1.0.3 date: 21/03/2022
  */
-public class Machine
-{
+public class Machine {
+
     private String[] flota;
     private int estaFlota, disparoX, disparoY, espaciosMachine;
     private String[][] tableroInformacionMachine;
 
-    public Machine()
-    {
-/*
-        //We declare the fleet of the machine
-        flota = new String[]
-                {"Portaaviones","Submarino","Submarino","Destructor","Destructor","Destructor","Fragata","Fragata","Fragata","Fragata"};
-        estaFlota = 0;
- */
+    /**
+     * constructor of Machine class
+     */
+    public Machine() {
 
-    //We declare the fleet of the machine
-        flota = new String[]{"portaaviones","submarino","submarino","destructor","destructor","destructor","fragata","fragata","fragata","fragata"};
+        flota = new String[]{"portaaviones","submarino","submarino","destructor","destructor","destructor","fragata",
+                "fragata","fragata","fragata"};
         estaFlota = 0;
 
         Random random = new Random();
@@ -43,8 +39,7 @@ public class Machine
      * Method that chooses a ship randomly from the fleet "flota"
      * @return barco the name of the fleet
      */
-    public String getBarco()
-    {
+    public String getBarco(){
         String barco="";
         if(estaFlota < 10) {
             barco = flota[estaFlota];
@@ -57,8 +52,7 @@ public class Machine
      * Method that randomizes the location of a ship
      * @return horizontal or vertical String
      */
-    public String getOrientacion()
-    {
+    public String getOrientacion(){
         Random random = new Random();
         String[] orientacionMaquina = {"horizontal","vertical"};
         return (orientacionMaquina[random.nextInt(0,2)]);
@@ -74,6 +68,7 @@ public class Machine
         return random.nextInt(0,10);
     }
 
+
     /**
      * Method that randomly determines the location of the ship at the Y coordinate
      * between 0 - 9
@@ -84,18 +79,29 @@ public class Machine
         return random.nextInt(0,10);
     }
 
+     /**
+     * Method that obtains the X coordinate of ship's shot
+     * @return coordinate of the shot on the x-axis
+     */
     public int getDisparoX(){
         Random random = new Random();
         return random.nextInt(0,10);
     }
+
+    /**
+     * Method that obtains the Y coordinate of ship's shot
+     * @return coordinate of the shot on the y-axis
+     * */
     public int getDisparoY(){
         Random random = new Random();
         return random.nextInt(0,10);
     }
-
-    public void prepararSiguienteDisparo(String[][] tableroInfPrincipalM) {
+    /**
+     * Method that generate randomly shots
+     */
+    public void generarDisparos(String[][] tableroInfPrincipalM) {
         tableroInformacionMachine=tableroInfPrincipalM;
-        if(!hayObjetivo()){
+        if(!objetivoEncontrado()){
             int disparoAnteriorX=disparoX,disparoAnteriorY=disparoY;
 
             Random random = new Random();
@@ -123,72 +129,59 @@ public class Machine
     }
 
     /**
-     * finds the headpiece and learns the next target to be fired at
-     * @return if a new target was selected
+     * Method that searches for a target close to the touched part of the ship
+     * @return objetivo boolean - if a new target was selected
      */
-    private boolean hayObjetivo() {
-        boolean objetivo=false;
+    private boolean objetivoEncontrado() {
+        boolean goal=false;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (tableroInformacionMachine[i][j].equals("tocado")&&!objetivo){
+                if (tableroInformacionMachine[i][j].equals("tocado")&&!goal){
                     if(i>0&&tableroInformacionMachine[i-1][j].equals("")){
                         disparoX=i-1;
                         disparoY=j;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(i>1&&tableroInformacionMachine[i-2][j].equals("")&&tableroInformacionMachine[i-1][j].equals("tocado")){
                         disparoX=i-2;
                         disparoY=j;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(i<9&&tableroInformacionMachine[i+1][j].equals("")){
                         disparoX=i+1;
                         disparoY=j;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(i<8&&tableroInformacionMachine[i+2][j].equals("")&&tableroInformacionMachine[i+1][j].equals("tocado")){
                         disparoX=i+2;
                         disparoY=j;
-                        objetivo=true;
+                        goal=true;
                     }
 
                     if(j>0&&tableroInformacionMachine[i][j-1].equals("")){
                         disparoX=i;
                         disparoY=j-1;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(j>1&&tableroInformacionMachine[i][j-2].equals("")&&tableroInformacionMachine[i][j-1].equals("tocado")){
                         disparoX=i;
                         disparoY=j-2;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(j<9&&tableroInformacionMachine[i][j+1].equals("")){
                         disparoX=i;
                         disparoY=j+1;
-                        objetivo=true;
+                        goal=true;
                     }
                     else if(j<8&&tableroInformacionMachine[i][j+2].equals("")&&tableroInformacionMachine[i][j+1].equals("tocado")){
                         disparoX=i;
                         disparoY=j+2;
-                        objetivo=true;
+                        goal=true;
                     }
                 }
             }
         }
-        return objetivo;
+        return goal;
     }
 
-    /**
-     * Method that determines the spaces that a ship occupies according to its name
-     * @return espaciosMachine int
-     */
-    public int getEspacioQueOcupa(String barco) {
-        switch (barco) {
-            case "Portaaviones" -> espaciosMachine = 4;
-            case "Submarino" -> espaciosMachine = 3;
-            case "Destructor" -> espaciosMachine = 2;
-            case "Fragata" -> espaciosMachine = 1;
-        }
-        return espaciosMachine;
-    }
 }
