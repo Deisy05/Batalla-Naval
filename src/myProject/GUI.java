@@ -787,6 +787,7 @@ public class GUI extends JFrame {
             }
             if (e.getSource() == ayuda)
             {
+                //manal de instrucciones
                 JLabel labelAyuda = new JLabel();
                 ImageIcon image = new ImageIcon(
                         Objects.requireNonNull(getClass().getResource("/myProject/resources/helping2.jpeg")));
