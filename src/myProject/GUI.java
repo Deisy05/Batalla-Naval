@@ -45,7 +45,7 @@ public class GUI extends JFrame {
         tableroPrincipalU = new JButton[10][10];
         tableroPosicionEnemigo = new JButton[10][10];
         casillasFlota = 0;
-        nombreFlota = new String[]{"Portaaviones", "Submarino", "Destructor", "Fragata"};
+        nombreFlota = new String[]{"portaaviones", "submarino", "destructor", "fragata"};
         cantidadFlota = new int[]{1, 1, 1, 1};
 
         this.setContentPane(new Canvas()); // to Paint the background image of the Frame
@@ -264,7 +264,9 @@ public class GUI extends JFrame {
         elegirFragata= new JButton();
         elegirFragata.addActionListener(escucha);
         elegirFragata.setPreferredSize(new Dimension(110, 80));
-        img = new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/fragata/fragata.png")));
+        img =
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/misBarcos/fragata" +
+                        ".png")));
         elegirFragata.setIcon(new ImageIcon(img.getImage().getScaledInstance(110, 80, Image.SCALE_SMOOTH)));
         elegirFragata.setBorderPainted(false);
         elegirFragata.setFocusPainted(false);
@@ -290,7 +292,7 @@ public class GUI extends JFrame {
         elegirDestructor.addActionListener(escucha);
         elegirDestructor.setPreferredSize(new Dimension(110, 80));
         img =
-                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/destructor" +
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/misBarcos" +
                         "/destructor.png")));
         elegirDestructor.setIcon(new ImageIcon(img.getImage().getScaledInstance(110, 80, Image.SCALE_SMOOTH)));
         elegirDestructor.setBorderPainted(false);
@@ -317,7 +319,7 @@ public class GUI extends JFrame {
         elegirPortaavion.addActionListener(escucha);
         elegirPortaavion.setPreferredSize(new Dimension(110, 80));
         img =
-                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/portaaviones" +
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/misBarcos" +
                         "/portaaviones.png")));
         elegirPortaavion.setIcon(new ImageIcon(img.getImage().getScaledInstance(110, 80, Image.SCALE_SMOOTH)));
         elegirPortaavion.setBorderPainted(false);
@@ -344,7 +346,7 @@ public class GUI extends JFrame {
         elegirSubmarino.addActionListener(escucha);
         elegirSubmarino.setPreferredSize(new Dimension(110, 80));
         img =
-                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/submarino" +
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/misBarcos" +
                         "/submarino.png")));
         elegirSubmarino.setIcon(new ImageIcon(img.getImage().getScaledInstance(110, 80, Image.SCALE_SMOOTH)));
         elegirSubmarino.setBorderPainted(false);
@@ -463,39 +465,24 @@ public class GUI extends JFrame {
 
     /**
      * This method has the purpose of modifying the images displayed by the buttons
-     * @param posicionPlayer matrix of player
-     * @param posicionEnX es la posicion inicial X en la matriz
-     * @param posicionEnY es la posicion inicial Y en la matriz
+     * @param matrix
+     * @param tableroPosicion
      */
-    private void pintarFlotaTableroPosicion(JButton[][] posicionPlayer,int posicionEnX, int posicionEnY) {
+    private void pintarFlota(String[][] matrix, JButton[][] tableroPosicion ) {
 
-        String direccion = "";
-
-        for(int p = 1; p <= casillasFlota;  p++){
-            switch (tipoFlota) {
-                case "Portaaviones" -> direccion = "/myProject/resources/portaaviones/portaaviones";
-                case "Submarino" -> direccion = "/myProject/resources/submarino/submarino";
-                case "Destructor" -> direccion = "/myProject/resources/destructor/destructor";
-                case "Fragata" -> direccion = "/myProject/resources/fragata/fragata";
-            }
-            switch (orientacion){
-                case "horizontal" -> {
-                    direccion+= "H "+p+".png";
-                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion))));
-
-                    posicionEnX++;
-                }
-                case "vertical" -> {
-                    direccion += "V " + p + ".png";
-                    posicionPlayer[posicionEnX][posicionEnY].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(direccion))));
-                    posicionEnY++;
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (!matrix[i][j].equals("")) {
+                        tableroPosicion[i][j].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                                "resources/misBarcos/" + matrix[i][j] + ".png"))));
+                    }
                 }
             }
-            revalidate();
             repaint();
-        }
+            revalidate();
 
     }
+
 
     /**
      * Este método confirma si aún está disponible determinado tipo de vehículo
@@ -504,23 +491,23 @@ public class GUI extends JFrame {
     private void eliminarOpcionFlota(){
 
         switch (tipoFlota){
-            case "Portaaviones" -> {panelDerecho.remove(elegirPortaavion);
+            case "portaaviones" -> {panelDerecho.remove(elegirPortaavion);
                 panelDerecho.remove(labelPortaavion);
                 vacio++;
             }
-            case "Submarino" -> {cantidadFlota[1]--;
+            case "submarino" -> {cantidadFlota[1]--;
                 if(cantidadFlota[1]==0){
                     panelDerecho.remove(elegirSubmarino);
                     panelDerecho.remove(labelSubmarino);
                     vacio++;}
             }
-            case "Destructor" -> {cantidadFlota[2]--;
+            case "destructor" -> {cantidadFlota[2]--;
                 if(cantidadFlota[2]==0){
                     panelDerecho.remove(elegirDestructor);
                     panelDerecho.remove(labelDestructor);
                     vacio++;}
             }
-            case "Fragata" -> {cantidadFlota[3]--;
+            case "fragata" -> {cantidadFlota[3]--;
                 if(cantidadFlota[3]==0){
                     panelDerecho.remove(elegirFragata);
                     panelDerecho.remove(labelFragata);
@@ -621,99 +608,11 @@ public class GUI extends JFrame {
 
     }
 
-    /**
-     * Este metodo cambia las casillas del tablero principal por un indicador segun el disparo
-     */
-    private void pintarDisparo(int posicionX, int posicionY, String quienDispara) {
 
-        switch (modelClass.getIndicador()) {
-            case "agua" -> {
-
-                if(Objects.equals(quienDispara, "jugador")){
-
-                    System.out.println("HAS DISPARADO AGUA"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources/indicadores/agua.png")));
-                    tableroPrincipalU[posicionX][posicionY].setIcon(img);
-                    tableroPosicionEnemigo[posicionX][posicionY].setIcon(img);
-
-                disparoMaquina();
-                }else if(Objects.equals(quienDispara, "maquina")) {
-                    System.out.println("EL ENEMIGO DISPARÓ AGUA"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources/indicadores/x.png")));
-                    tableroPosicionU[posicionX][posicionY].setIcon(img);
-
-
-                }
-            }
-            case "tocado" -> {
-
-                if (Objects.equals(quienDispara, "jugador")){
-                    System.out.println("DISPARASTE Y TOCASTE BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources" +
-                                    "/indicadores/bomb.png")));
-                    tableroPrincipalU[posicionX][posicionY].setIcon(img);
-                    tableroPosicionEnemigo[posicionX][posicionY].setIcon(img);
-
-
-                }else if (Objects.equals(quienDispara, "maquina")) {
-                    System.out.println("EL ENEMIGO DISPARO Y TOCO BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources/indicadores/bombEnemy.png")));
-                    tableroPosicionU[posicionX][posicionY].setIcon(img);
-
-                    disparoMaquina();
-                }
-            }
-            case "hundido" -> {
-
-                String[][] matrixDisparos;
-                if (Objects.equals(quienDispara, "jugador")){
-                    System.out.println("HUNDISTE UN BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    matrixDisparos = modelClass.getTableroPosMaquina();
-                    img= new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources/indicadores" +
-                                    "/fire2.png")));
-                    for (int i = 0; i < 10; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            if (matrixDisparos[i][j] == "hundido") {
-                                tableroPrincipalU[i][j].setIcon(img);
-                                tableroPosicionEnemigo[i][j].setIcon(img);
-                            }
-                        }
-                    }
-                }else if(Objects.equals(quienDispara, "maquina")){
-                    System.out.println("EL ENEMIGO HUNDIO UN BARCO"+"/n posicion x: "+posicionX+" posicion y: "+posicionY);
-                    matrixDisparos= modelClass.getTableroPosUsuario();
-                    img=new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "/myProject/resources/indicadores" +
-                                    "/hundidoE.png")));
-                    for (int i = 0; i < 10; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            if (matrixDisparos[i][j] == "hundido") {
-                                tableroPosicionU[i][j].setIcon(img);
-                            }
-                        }
-                    }
-                    disparoMaquina();
-                }
-                //validarFinPartida(){}
-            }
-
-
-        }
+    public void pasarTurno() {
+            modelClass.dispararMaquina();
+            pintarFlota(modelClass.getTableroPosUsuario(), tableroPosicionU);
     }
-
-    public void disparoMaquina() {
-            System.out.println("EL ENEMIGO HA DISPARADO: "+modelClass.setTableroInfPosicionU());
-            System.out.println("coordenada x: "+modelClass.getCoordenadaXMaquina()+ " coordenada y: "+modelClass.getCoordenadaYMaquina());
-
-            pintarDisparo(modelClass.getCoordenadaXMaquina(), modelClass.getCoordenadaYMaquina(),
-                    "maquina");
-    }
-
 
     /**
      * adds the listener to the 100 buttons
@@ -762,7 +661,7 @@ public class GUI extends JFrame {
      */
 
     private class Escucha implements ActionListener {
-        int opcionIniciar=0;
+        int opcionIniciar=0;// 0 para ingresar y crear la flota, 1 para iniciar el juego y poder disparar
 
         @Override
         public void actionPerformed(ActionEvent e)
@@ -783,96 +682,117 @@ public class GUI extends JFrame {
                 opcionTerritorioEnemigo(); //sale después de ordenar la flota
                 addEscucha(tableroPrincipalU);
                 interfaz=2;
+                modelClass.ingresarBarcosMaquina();
+                pintarFlota(modelClass.getTableeroPosMaquina(),tableroPosicionEnemigo);
                 revalidate();
                 repaint();
-            }
-            switch (interfaz){
-                case 0 ->{
-                    //revisar cuál de los vehículos fue seleccionado y aplicarle alineación a esa flota seleccionada
-                    for (int m = 0; m < 4; m++)
-                    {
-                        if (vehiculo[m] == e.getSource())
-                        {
-                            alineacionFlota(); //elige la orientación
-                            tipoFlota = nombreFlota[m];
-                            casillasFlota = 5 - (m + 1);
-                            break;
-                        }
-                    }
-                    if (e.getSource() == horizontal) {
-                        orientacion = "horizontal";
-                        panelDerecho2.removeAll();
-                        revalidate();
-                        repaint();
-                        textoSeleccionarCasilla();
-                    }
-                    if (e.getSource() == vertical) {
-                        orientacion = "vertical";
-                        panelDerecho2.removeAll();
-                        textoSeleccionarCasilla();
-                        revalidate();
-                        repaint();
-
-                    }
-                }
-                case 1 ->{
-                    //check which of the 100 buttons was clicked
-                    for (int i = 0; i < 10; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            if (tableroPosicionU[i][j] == e.getSource()) {
-                                //once found, it is checked to see if it can be added to the underlying positions
-                                if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota, casillasFlota)) {
-                                    pintarFlotaTableroPosicion(tableroPosicionU,i, j);
-                                    eliminarOpcionFlota();
-                                    modelClass.ingresarBarcosMaquina();
-                                    tipoFlota= modelClass.getBarcoMaquina();
-                                    orientacion= modelClass.getOrientacionMaquina();
-                                    casillasFlota= modelClass.getEspaciosQueOcupaMaquina();
-
-                                    pintarFlotaTableroPosicion(tableroPosicionEnemigo,
-                                            modelClass.getCoordenadaXMaquina(),modelClass.getCoordenadaYMaquina());
-                                    panelDerecho2.removeAll();
-                                    removeEscucha(tableroPosicionU);
-                                    remove(panelDerecho2);
-
-                                    interfaz=0;
-
-                                    elegirPortaavion.addActionListener(escucha);
-                                    elegirSubmarino.addActionListener(escucha);
-                                    elegirDestructor.addActionListener(escucha);
-                                    elegirFragata.addActionListener(escucha);
-
-                                    revalidate();
-                                    repaint();
-
-                                } else{
-                                    JOptionPane.showMessageDialog(panelIzquierdo,
-                                            "No se pudo posicionar la flota porque " + modelClass.getError(), "Error", JOptionPane.ERROR_MESSAGE);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                case 2->{
-                    for (int i = 0; i < 10 ; i++) {
-                        for (int j = 0; j < 10; j++) {
-                            if(e.getSource() == tableroPrincipalU[i][j]){
-                                System.out.println("HAS DISPARADO");
-                                modelClass.setTableroInfPrincipalU(1,i,j);
-                                tableroPrincipalU[i][j].removeActionListener(escucha);
-                                pintarDisparo(i,j,"jugador");
-                            }
-
-                        }
-                    }
-                }
-
             }
 
             if(e.getSource()== verTerritorioEnemigo){
                 JOptionPane.showMessageDialog(null, tableroEnemigo, "TABLERO DE POSICIÓN DEL ENEMIGO",
                         JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                //Interfaz: 0 para elegir el tipo de vehiculo, 1 para agregar el vehiculo a la flota, 2 para iniciar juego
+                switch (interfaz){
+                    case 0 ->{
+                        //revisar cuál de los vehículos fue seleccionado y aplicarle alineación a esa flota seleccionada
+                        for (int m = 0; m < 4; m++)
+                        {
+                            if (vehiculo[m] == e.getSource())
+                            {
+                                alineacionFlota(); //elige la orientación
+                                tipoFlota = nombreFlota[m];
+                                break;
+                            }
+                        }
+                        if (e.getSource() == horizontal) {
+                            orientacion = "horizontal";
+                            panelDerecho2.removeAll();
+                            revalidate();
+                            repaint();
+                            textoSeleccionarCasilla();
+                        }
+                        if (e.getSource() == vertical) {
+                            orientacion = "vertical";
+                            panelDerecho2.removeAll();
+                            textoSeleccionarCasilla();
+                            revalidate();
+                            repaint();
+
+                        }
+                    }
+                    case 1 ->{
+                        //check which of the 100 buttons was clicked
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                if (tableroPosicionU[i][j] == e.getSource()) {
+                                    //once found, it is checked to see if it can be added to the underlying positions
+                                    if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota)) {
+                                        pintarFlota(modelClass.getTableroPosUsuario(),tableroPosicionU);
+                                        eliminarOpcionFlota();
+                                        panelDerecho2.removeAll();
+                                        removeEscucha(tableroPosicionU);
+                                        remove(panelDerecho2);
+
+                                        interfaz=0;
+
+                                        elegirPortaavion.addActionListener(escucha);
+                                        elegirSubmarino.addActionListener(escucha);
+                                        elegirDestructor.addActionListener(escucha);
+                                        elegirFragata.addActionListener(escucha);
+
+                                        revalidate();
+                                        repaint();
+
+                                    } else{
+                                        JOptionPane.showMessageDialog(panelIzquierdo,
+                                                "No se pudo posicionar la flota porque " + modelClass.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    case 2 ->{
+
+                        setDisparo(e);
+
+                        if(modelClass.hayGanador()){
+                            int respuesta;
+                            if(modelClass.getGanador().equals("maquina") ){
+                                respuesta =JOptionPane.showConfirmDialog(panelIzquierdo,"Perdiste, el enemigo ha ganado",
+                                        "Termino el juego",JOptionPane.DEFAULT_OPTION);
+                            }else{
+                                respuesta= JOptionPane.showConfirmDialog(panelDerecho,"Ganaste!!!","Terminó el juego",
+                                        JOptionPane.DEFAULT_OPTION);
+                            }
+                            if(respuesta==0){
+                                System.exit(0);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        /**
+         * Sets the position where the shot was made by the user
+         * @param disparo
+         */
+        private void setDisparo(ActionEvent disparo){
+            for (int i = 0; i < 10 ; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if(disparo.getSource() == tableroPrincipalU[i][j]){
+                        if(modelClass.setTableroInfPrincipalU(i,j)){
+                            pintarFlota(modelClass.getTableroInfPrincipalU(),tableroPrincipalU);
+                            pintarFlota(modelClass.getTableeroPosMaquina(),tableroPosicionEnemigo);
+                            pasarTurno();
+                        }else{
+                            pintarFlota(modelClass.getTableroInfPrincipalU(),tableroPrincipalU);
+                            pintarFlota(modelClass.getTableeroPosMaquina(),tableroPosicionEnemigo);
+                        }
+                    }
+                }
             }
         }
 
