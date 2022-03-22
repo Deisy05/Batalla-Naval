@@ -23,8 +23,7 @@ public class GUI extends JFrame {
     private Escucha escucha;
     private ImageIcon img;
     private JLabel logo,labelAux,labelInicioBatalla, labelCreaFlota, labelPortaavion, labelSubmarino,labelDestructor,
-            labelFragata,
-            labelAgua,labelTocado,labelHundido;
+            labelFragata, labelInstrucciones, labelAgua,labelTocado,labelHundido;
     private JButton horizontal, vertical, iniciar, instrucciones, salir, ayuda, verTerritorioEnemigo, elegirPortaavion,
             elegirSubmarino,elegirDestructor, elegirFragata;
     private  JButton []vehiculo;
@@ -670,6 +669,17 @@ public class GUI extends JFrame {
             if (e.getSource()==salir){
                 System.exit(0);
             }
+            if (e.getSource() == instrucciones)
+            {
+                labelInstrucciones = new JLabel();
+                ImageIcon image = new ImageIcon(
+                        Objects.requireNonNull(getClass().getResource("/myProject/resources/manual.jpeg")));
+                labelInstrucciones.setIcon(new ImageIcon(image.getImage().getScaledInstance(600, 480,
+                        Image.SCALE_SMOOTH)));
+
+                JOptionPane.showMessageDialog(null, labelInstrucciones, null, JOptionPane.PLAIN_MESSAGE);
+
+            }
             if(e.getSource()==iniciar&& opcionIniciar==0){
                 remove(panelInicio);
                 pintarEntrada();
@@ -687,13 +697,7 @@ public class GUI extends JFrame {
                 revalidate();
                 repaint();
             }
-            if(e.getSource()==instrucciones && opcionIniciar==0) {
-                remove(panelInicio);
 
-                opcionIniciar = 0;
-                revalidate();
-                repaint();
-            }
 
             if(e.getSource()== verTerritorioEnemigo){
                 JOptionPane.showMessageDialog(null, tableroEnemigo, "TABLERO DE POSICIÓN DEL ENEMIGO",
@@ -779,6 +783,17 @@ public class GUI extends JFrame {
                         }
                     }
                 }
+
+            }
+            if (e.getSource() == ayuda)
+            {
+                JLabel labelAyuda = new JLabel();
+                ImageIcon image = new ImageIcon(
+                        Objects.requireNonNull(getClass().getResource("/myProject/resources/helping.jpeg")));
+                labelAyuda.setIcon(new ImageIcon(image.getImage().getScaledInstance(600, 680,
+                        Image.SCALE_SMOOTH)));
+
+                JOptionPane.showMessageDialog(null, labelAyuda, null, JOptionPane.PLAIN_MESSAGE);
 
             }
         }
