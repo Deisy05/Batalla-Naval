@@ -9,12 +9,11 @@ import java.util.Objects;
 
 
 /**
- * This class is designed in order to update GUI elements
- *
  * @author borja.carlos@correounivalle.edu.co
  *         deisy.melo@correounivalle.edu.co
- * @version v.2.0 date: 30/12/2024
+ * @version v.2.0.0 date: 31/12/2024
  */
+
 public class GUI extends JFrame {
 
     private JPanel panelInicio, panelIzquierdo, panelDerecho, panelDerecho2,
@@ -463,8 +462,8 @@ public class GUI extends JFrame {
 
     /**
      * This method has the purpose of modifying the images displayed by the buttons
-     * @param matrix
-     * @param tableroPosicion
+     * @param matrix A 2D array of strings representing the positions of the ships on the board.
+     * @param tableroPosicion A 2D array of JButtons representing the positions on the board.
      */
     private void pintarFlota(String[][] matrix, JButton[][] tableroPosicion) {
         for (int i = 0; i < 10; i++) {
@@ -826,5 +825,3 @@ public class GUI extends JFrame {
 
     }
 }
-
-// TODO: improve performance and clean code

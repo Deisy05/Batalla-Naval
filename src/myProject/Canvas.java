@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * @author Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
  *         Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
- * @version v.1.0.1 date: 12/03/2022
+ * @version v.1.0.1 date: 26/03/2022
  */
 public class Canvas  extends JPanel
 {

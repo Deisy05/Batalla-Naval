@@ -1,29 +1,28 @@
-# Archivos de IntelliJ IDEA
-.idea/
-*.iml
-
-.idea
-idea
-
-# Archivos compilados de Java
-*.class
-
-# Archivos generados por Maven (si se usa)
-target/
-
-# Archivos generados por Gradle (si se usa)
-.gradle/
-build/
-
-# Archivos de configuración de dependencias de Java
-*.log
-
-# Archivos de configuración específicos del sistema
-.DS_Store
-Thumbs.db
-
-# Archivos de usuario y configuración local
-*.swp
-*~
-
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
