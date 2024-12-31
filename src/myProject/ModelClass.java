@@ -1,12 +1,5 @@
 package myProject;
 
-/**
- * This class is designed in order to view ModelClass
- *
- * @author borja.carlos@correounivalle.edu.co
- *         deisy.melo@correounivalle.edu.co
- * @version v.2.0 date: 30/12/2024
- */
 public class ModelClass {
     private static final int BOARD_SIZE = 10;
     private static final int TOTAL_SHIP_CELLS = 20;
