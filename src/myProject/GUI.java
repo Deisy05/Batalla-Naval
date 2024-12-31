@@ -4,17 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Objects;
 
 
 /**
- * This class is designed in order to view ModelClass
+ * This class is designed in order to update GUI elements
  *
- * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
- *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
- * @version v.1.0.2 date: 20/03/2022
+ * @author borja.carlos@correounivalle.edu.co
+ *         deisy.melo@correounivalle.edu.co
+ * @version v.2.0 date: 30/12/2024
  */
-
 public class GUI extends JFrame {
 
     private JPanel panelInicio, panelIzquierdo, panelDerecho, panelDerecho2,
@@ -23,13 +23,12 @@ public class GUI extends JFrame {
     private Escucha escucha;
     private ImageIcon img;
     private JLabel logo,labelAux,labelInicioBatalla, labelCreaFlota, labelPortaavion, labelSubmarino,labelDestructor,
-            labelFragata, labelInstrucciones, labelAgua,labelTocado,labelHundido;
+            labelFragata, labelInstrucciones;
     private JButton horizontal, vertical, iniciar, instrucciones, salir, ayuda, verTerritorioEnemigo, elegirPortaavion,
             elegirSubmarino,elegirDestructor, elegirFragata;
     private  JButton []vehiculo;
-    private int interfaz, casillasFlota,vacio;
+    private int gameStatus, completedShipCount;
     private JButton[][] tableroPosicionU, tableroPrincipalU, tableroPosicionEnemigo;
-    private JTextArea cantidadFlotas;
     private int[] cantidadFlota;
     private String[] nombreFlota;
     private String orientacion, tipoFlota;
@@ -39,11 +38,11 @@ public class GUI extends JFrame {
      * Constructor of GUI class
      */
     public GUI() {
-        interfaz = 0;
+        vehiculo = new JButton[4];
+        gameStatus = 0;
         tableroPosicionU = new JButton[10][10];
         tableroPrincipalU = new JButton[10][10];
         tableroPosicionEnemigo = new JButton[10][10];
-        casillasFlota = 0;
         nombreFlota = new String[]{"portaaviones", "submarino", "destructor", "fragata"};
         cantidadFlota = new int[]{1, 2, 3, 4};
 
@@ -67,7 +66,7 @@ public class GUI extends JFrame {
         constrains = new GridBagConstraints();
         modelClass = new ModelClass();
         escucha = new Escucha();
-        vacio=0;
+        completedShipCount =0;
 
         salir = new JButton();
         salir.addActionListener(escucha);
@@ -207,7 +206,7 @@ public class GUI extends JFrame {
      */
     private void pintarTableroPosicion()
     {
-        if (interfaz == 0) {
+        if (gameStatus == 0) {
             GridBagConstraints constrainsPosicion = new GridBagConstraints();
 
             for (int i = 0; i < 10; i++) {
@@ -234,7 +233,7 @@ public class GUI extends JFrame {
         tableroEnemigo= new JPanel(new GridBagLayout());
         tableroEnemigo.setPreferredSize(new Dimension(480, 500));
 
-        if (interfaz == 0) {
+        if (gameStatus == 0) {
             GridBagConstraints constrainsPosicion = new GridBagConstraints();
 
             for (int i = 0; i < 10; i++) {
@@ -256,7 +255,7 @@ public class GUI extends JFrame {
     }
 
     /**
-     * Este método agrega los componentes necesarios para crear la flota
+     * Agrega los componentes necesarios para crear la flota
      */
     private void opcionesFlota(){
 
@@ -376,7 +375,7 @@ public class GUI extends JFrame {
     }
 
     /**
-     * Este método agrega los componentes para determinar la alineación de cada elemento de la flota
+     * Agrega los componentes para determinar la alineación de cada elemento de la flota
      */
     private void alineacionFlota(){
 
@@ -446,7 +445,7 @@ public class GUI extends JFrame {
     }
 
     /**
-     * Este método crea el componente para dar una instruccion al usuario
+     * Crea el componente para dar una instrucción al usuario
      */
     private void textoSeleccionarCasilla(){
 
@@ -456,7 +455,7 @@ public class GUI extends JFrame {
         labelAux=new JLabel(img);
         panelDerecho2.add(labelAux);
         addEscucha(tableroPosicionU);
-        interfaz= 1; //pasamos a interfaz para selección de flota
+        gameStatus = 1; //pasamos a interfaz para selección de flota
         revalidate();
         repaint();
 
@@ -467,19 +466,24 @@ public class GUI extends JFrame {
      * @param matrix
      * @param tableroPosicion
      */
-    private void pintarFlota(String[][] matrix, JButton[][] tableroPosicion ) {
-
+    private void pintarFlota(String[][] matrix, JButton[][] tableroPosicion) {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                if (!matrix[i][j].equals("")) {
-                    tableroPosicion[i][j].setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                            "resources/misBarcos/" + matrix[i][j] + ".png"))));
+                if (!matrix[i][j].isEmpty()) {
+                    try {
+                        String resourcePath = "/myProject/resources/misBarcos/" + matrix[i][j] + ".png";
+                        URL resource = getClass().getResource(resourcePath);
+                        if (resource != null) {
+                            tableroPosicion[i][j].setIcon(new ImageIcon(resource));
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error cargando imagen: " + e.getMessage());
+                    }
                 }
             }
         }
-        repaint();
         revalidate();
-
+        repaint();
     }
 
 
@@ -492,29 +496,29 @@ public class GUI extends JFrame {
         switch (tipoFlota){
             case "portaaviones" -> {panelDerecho.remove(elegirPortaavion);
                 panelDerecho.remove(labelPortaavion);
-                vacio++;
+                completedShipCount++;
             }
             case "submarino" -> {cantidadFlota[1]--;
                 if(cantidadFlota[1]==0){
                     panelDerecho.remove(elegirSubmarino);
                     panelDerecho.remove(labelSubmarino);
-                    vacio++;}
+                    completedShipCount++;}
             }
             case "destructor" -> {cantidadFlota[2]--;
                 if(cantidadFlota[2]==0){
                     panelDerecho.remove(elegirDestructor);
                     panelDerecho.remove(labelDestructor);
-                    vacio++;}
+                    completedShipCount++;}
             }
             case "fragata" -> {cantidadFlota[3]--;
                 if(cantidadFlota[3]==0){
                     panelDerecho.remove(elegirFragata);
                     panelDerecho.remove(labelFragata);
-                    vacio++;}
+                    completedShipCount++;}
             }
         }
 
-        if(vacio==4){
+        if(completedShipCount ==4){
             this.remove(labelCreaFlota);
             img=
                     new ImageIcon(Objects.requireNonNull(getClass().getResource("/myProject/resources/iniciaBatalla.png")));
@@ -609,8 +613,9 @@ public class GUI extends JFrame {
 
 
     public void pasarTurno() {
-        modelClass.dispararMaquina();
-        pintarFlota(modelClass.getTableroPosicionUsuario(), tableroPosicionU);
+        modelClass.processMachineMove();
+        pintarFlota(modelClass.getUserBoard(), tableroPosicionU);
+
     }
 
     /**
@@ -691,9 +696,9 @@ public class GUI extends JFrame {
                 pintarTableroPrincipal();
                 opcionTerritorioEnemigo(); //sale después de ordenar la flota
                 addEscucha(tableroPrincipalU);
-                interfaz=2;
+                gameStatus =2;
                 modelClass.ingresarBarcosMaquina();
-                pintarFlota(modelClass.getTableroPosicionMaquina(),tableroPosicionEnemigo);
+                pintarFlota(modelClass.getMachineBoard(), tableroPosicionEnemigo);
                 revalidate();
                 repaint();
             }
@@ -704,7 +709,7 @@ public class GUI extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
             }else{
                 //Interfaz: 0 para elegir el tipo de vehiculo, 1 para agregar el vehiculo a la flota, 2 para iniciar juego
-                switch (interfaz){
+                switch (gameStatus){
                     case 0 ->{
                         //revisar cuál de los vehículos fue seleccionado y aplicarle alineación a esa flota seleccionada
                         for (int m = 0; m < 4; m++)
@@ -738,14 +743,14 @@ public class GUI extends JFrame {
                             for (int j = 0; j < 10; j++) {
                                 if (tableroPosicionU[i][j] == e.getSource()) {
                                     //once found, it is checked to see if it can be added to the underlying positions
-                                    if (modelClass.crearTerritorioDelUsuario(i, j, orientacion, tipoFlota)) {
-                                        pintarFlota(modelClass.getTableroPosicionUsuario(),tableroPosicionU);
+                                    if (modelClass.placeUserShip(i, j, orientacion, tipoFlota)) {
+                                        pintarFlota(modelClass.getUserBoard(),tableroPosicionU);
                                         eliminarOpcionFlota();
                                         panelDerecho2.removeAll();
                                         removeEscucha(tableroPosicionU);
                                         remove(panelDerecho2);
 
-                                        interfaz=0;
+                                        gameStatus =0;
 
                                         elegirPortaavion.addActionListener(escucha);
                                         elegirSubmarino.addActionListener(escucha);
@@ -757,7 +762,7 @@ public class GUI extends JFrame {
 
                                     } else{
                                         JOptionPane.showMessageDialog(panelIzquierdo,
-                                                "No se pudo posicionar la flota porque " + modelClass.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                                                "No se pudo posicionar la flota porque " + modelClass.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                                     }
                                     break;
                                 }
@@ -768,7 +773,7 @@ public class GUI extends JFrame {
 
                         setDisparo(e);
 
-                        if(modelClass.hayGanador()){
+                        if(modelClass.hasWinner()){
                             int respuesta;
                             if(modelClass.getWinner().equals("maquina") ){
                                 respuesta =JOptionPane.showConfirmDialog(panelIzquierdo,"Perdiste, el enemigo ha ganado",
@@ -806,13 +811,13 @@ public class GUI extends JFrame {
             for (int i = 0; i < 10 ; i++) {
                 for (int j = 0; j < 10; j++) {
                     if(disparo.getSource() == tableroPrincipalU[i][j]){
-                        if(modelClass.setTableroInformacionPrincipalUsuario(i,j)){
-                            pintarFlota(modelClass.getTableroInformacionPrincipalU(),tableroPrincipalU);
-                            pintarFlota(modelClass.getTableroPosicionMaquina(),tableroPosicionEnemigo);
+                        if(modelClass.processUserShot(i,j)){
+                            pintarFlota(modelClass.getUserTrackingBoard(),tableroPrincipalU);
+                            pintarFlota(modelClass.getMachineBoard(),tableroPosicionEnemigo);
                             pasarTurno();
                         }else{
-                            pintarFlota(modelClass.getTableroInformacionPrincipalU(),tableroPrincipalU);
-                            pintarFlota(modelClass.getTableroPosicionMaquina(),tableroPosicionEnemigo);
+                            pintarFlota(modelClass.getUserTrackingBoard(),tableroPrincipalU);
+                            pintarFlota(modelClass.getMachineBoard(),tableroPosicionEnemigo);
                         }
                     }
                 }
@@ -821,3 +826,5 @@ public class GUI extends JFrame {
 
     }
 }
+
+// TODO: improve performance and clean code
