@@ -6,7 +6,7 @@ import java.util.Random;
  * This class is designed in order to generate the information for player "machine"
  * @author Carlos Andrés Borja - borja.carlos@correounivalle.edu.co
  *         Deisy Catalina Melo - deisy.melo@correounivalle.edu.co
- * @version v.1.0.3 date: 21/03/2022
+ * @version v.1.0.3 date: 26/01/2023
  */
 public class Machine {
 
@@ -79,7 +79,7 @@ public class Machine {
         return random.nextInt(0,10);
     }
 
-     /**
+    /**
      * Method that obtains the X coordinate of ship's shot
      * @return coordinate of the shot on the x-axis
      */
